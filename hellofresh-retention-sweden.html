@@ -415,6 +415,40 @@
   .spark-wrap { display: flex; align-items: center; gap: 14px; }
   .spark-meta { font-family: var(--mono); font-size: 10px; color: var(--d-muted); }
 
+  /* ===== weekly trend line chart ===== */
+  .trend-svg { width: 100%; height: auto; display: block; clip-path: inset(0 100% 0 0); }
+  .trend-svg.draw { animation: trendDraw 1.1s cubic-bezier(.3,.7,.3,1) forwards; }
+  @keyframes trendDraw { to { clip-path: inset(0 0 0 0); } }
+  .trend-grid { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+  .trend-tick { fill: var(--d-muted); font-family: var(--mono); font-size: 9px; }
+  .trend-anchor { stroke: rgba(255,255,255,0.28); stroke-width: 1; stroke-dasharray: 3 3; }
+  .trend-line { fill: none; stroke-width: 2; opacity: 1; stroke-linejoin: round; stroke-linecap: round; }
+  .trend-line.blend { stroke: #ffffff; stroke-width: 3; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.35)); }
+  .trend-dot { stroke: var(--bg-dark-panel); stroke-width: 1.5; }
+  .trend-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 20px; margin-top: 16px; }
+  .tl-row { display: grid; grid-template-columns: 16px 1fr auto auto; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; color: var(--d-soft); }
+  .tl-sw { width: 14px; height: 3px; border-radius: 2px; }
+  .tl-row.blend .tl-sw { height: 5px; background: #fff !important; }
+  .tl-row.blend .tl-name { color: #fff; font-weight: 600; }
+  .tl-name { color: var(--d-text); }
+  .tl-val { color: #fff; font-weight: 600; text-align: right; }
+  .tl-delta { text-align: right; min-width: 58px; }
+  .tl-delta.up { color: var(--d-red); }
+  .tl-delta.down { color: var(--d-green); }
+  .tl-delta.flat { color: var(--d-muted); }
+
+  /* ===== directional (amber) read ===== */
+  .dir-item { display: grid; grid-template-columns: 128px 1fr 172px; gap: 14px; align-items: center; padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .dir-item:last-child { border-bottom: none; }
+  .dir-co { display: flex; flex-direction: column; gap: 3px; }
+  .dir-co .nm { font-family: var(--serif); font-style: italic; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 7px; }
+  .dir-co .rt { font-family: var(--mono); font-size: 10px; color: var(--d-muted); }
+  .dir-drv { font-size: 12px; color: var(--d-soft); line-height: 1.5; }
+  .dir-drv code { font-family: var(--mono); font-size: 11px; color: var(--d-text); }
+  .dir-drv .pp { color: var(--d-red); font-weight: 600; font-family: var(--mono); }
+  .dir-cav { font-family: var(--mono); font-size: 10px; color: var(--d-amber); text-align: right; line-height: 1.45; }
+  .dir-cav.red { color: var(--d-red); }
+
   /* ===== setup stage ===== */
   .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .setup-item { border: 1px solid var(--line-dark); border-radius: 10px; padding: 13px 16px; background: var(--bg-dark-panel); }
@@ -518,13 +552,13 @@
 
         <!-- STAGE 1 · L1 HEADLINE -->
         <div class="stage" data-stage="1">
-          <div class="kicker"><span class="level-tag l1">L1</span> Anomaly scan · cancel rate by cohort</div>
-          <h2 class="stage-title">Stable on the surface — front-loaded underneath.</h2>
-          <p class="stage-desc">No cohort crosses the anomaly threshold this week. But the cancel rate is steeply tenure-graded: the book's risk lives in the first weeks of a customer's life.</p>
+          <div class="kicker"><span class="level-tag l1">L1</span> Cancel rate by cohort · W20 snapshot</div>
+          <h2 class="stage-title">Front-loaded by tenure.</h2>
+          <p class="stage-desc">The W20 cancel rate is steeply tenure-graded: the book's risk lives in the first weeks of a customer's life. Each cohort's gap to its own seasonal baseline is what the driver views below decompose.</p>
 
-          <div style="display:flex; gap:10px; margin-bottom:16px;">
-            <span class="badge ok">● No anomaly · max Z = +0.9 &lt; 1.5</span>
-            <span class="badge neutral">trend stable W17–W20</span>
+          <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+            <span class="badge neutral">Snapshot week · 2026-W20 (2026-05-11)</span>
+            <span class="badge ok">● 2 yrs weekly history loaded · trend next</span>
           </div>
 
           <div class="tenure-grid" id="tenure-cards"></div>
@@ -536,6 +570,27 @@
               <span><span class="sw" style="background:linear-gradient(90deg,#b85047,#e8907f)"></span> model-grade cohort</span>
               <span><span class="sw" style="background:repeating-linear-gradient(45deg,rgba(232,144,127,.5),rgba(232,144,127,.5) 4px,rgba(232,144,127,.2) 4px,rgba(232,144,127,.2) 8px)"></span> not yet mature</span>
             </div>
+          </div>
+        </div>
+
+        <!-- STAGE 9 · WEEKLY TREND (Overview) -->
+        <div class="stage" data-stage="9">
+          <div class="kicker"><span class="level-tag l1">L1</span> Overview · weekly cancellation trend</div>
+          <h2 class="stage-title">Direction, not just level.</h2>
+          <p class="stage-desc">Weekly cancel rate by cohort, last 26 weeks — verbatim from the historical series. The bold white line is the Sweden blend (active-customer-weighted). The right-most point is W20 (2026-05-11), identical to the snapshot above.</p>
+          <div class="card">
+            <div class="card-head"><span>Cancel rate · last 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
+            <div id="trend-chart"></div>
+            <div class="trend-legend" id="trend-legend"></div>
+            <div style="font-family:var(--mono); font-size:9px; color:var(--d-muted); margin-top:12px; letter-spacing:0.04em;">Δ = change vs 4 weeks ago · ▲ rising (worse) · ▼ falling (better)</div>
+          </div>
+          <div class="note-box warn">
+            <div class="note-title">What the trend adds</div>
+            <div class="note-body">The single week can't show direction. Over the last quarter most cohorts have drifted <strong>up</strong> — <strong>Medium +3.8pp</strong> and <strong>Long-Term +2.7pp</strong> most sharply, <strong>Established +1.6pp</strong>, <strong>Mature +1.7pp</strong> — while <strong>New eased −1.0pp</strong> in the last month. The blend (~13.6%) looks flat because cohort moves partly offset.</div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">On reliability</div>
+            <div class="note-body">These are <strong>raw weekly cancel rates</strong> — solid for all six cohorts (every recent week is above the 100-customer threshold). The <span class="qdot a"></span>/<span class="qdot r"></span> flags elsewhere apply to the <strong>attribution model's decomposition</strong>, not to this rate history.</div>
           </div>
         </div>
 
@@ -559,7 +614,7 @@
         <div class="stage" data-stage="3">
           <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · New cohort <span class="qdot g" style="margin-left:4px;"></span></div>
           <h2 class="stage-title">Baseline does most of it. Three levers do the rest.</h2>
-          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate. The baseline is the structural propensity of these customers to leave; the floating bars are this week's drivers on top of it.</p>
+          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate. The baseline is the built-in tendency of these customers to leave; the floating bars are this week's drivers on top of it.</p>
           <div class="card">
             <div class="card-head"><span>New · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
             <div class="wf-wrap"><div id="wf-new"></div></div>
@@ -579,30 +634,38 @@
         <div class="stage" data-stage="4">
           <div class="kicker"><span class="level-tag l2">L2</span> Segmentation scan · acquisition mix</div>
           <h2 class="stage-title">It's a quality-of-acquisition signal.</h2>
-          <p class="stage-desc">The upward marketing pressure on New isn't a volume spike — channel shares are stable. It's concentrated in two specific acquisition channels whose customers cancel earlier.</p>
+          <p class="stage-desc">The marketing group breaks into four channel terms in the model. Two contribute this week; two are in the model but didn't fire (their input was zero in W20). Every figure below is the model's W20 output.</p>
           <div class="card">
             <div class="card-head"><span>Channels flagged by the model · New cohort</span><span class="right">contribution to CR</span></div>
             <div class="rank-list" id="rank-chan"></div>
           </div>
           <div class="card">
-            <div class="card-head"><span>Acquisition mix · reference (shares stable W17–W20)</span></div>
-            <div class="chan-grid">
-              <div>
-                <div class="chan-col-title">Top channels</div>
-                <div class="chan-row"><span class="nm flagged">Freebies — offline<span class="micro">flagged · +1.3pp at lag 2</span></span><span class="sh">~16%</span></div>
-                <div class="chan-row"><span class="nm flagged">Influencer<span class="micro">flagged · +0.3pp at lag 3</span></span><span class="sh">~9%</span></div>
-                <div class="chan-row"><span class="nm">Direct sales</span><span class="sh">~22%</span></div>
-                <div class="chan-row"><span class="nm">Freebies — online</span><span class="sh">~14%</span></div>
-              </div>
-              <div>
-                <div class="chan-col-title">Read</div>
-                <div class="note-body" style="font-size:12px;">No concentration shock — no channel share moved &gt;3pp vs baseline. The signal is <strong style="color:#fff;">who these channels bring in</strong>, not how many. Offline-freebies acquisition carries the highest early-cancel propensity in the New cohort, surfacing 2–3 weeks after sign-up.</div>
-              </div>
+            <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">W20 · Model A</span></div>
+            <div class="decomp-row head"><div>Channel term</div><div>Contribution</div><div>% of CR</div><div>% of group</div></div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_freebies_offline</code> <span class="lagtag">lag 2</span></div>
+              <div class="decomp-val pos">+1.33pp</div><div class="decomp-val pos">+7.3%</div><div class="rel-r2" style="text-align:right">79.6%</div>
+            </div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_influencer</code> <span class="lagtag">lag 3</span></div>
+              <div class="decomp-val pos">+0.34pp</div><div class="decomp-val pos">+1.9%</div><div class="rel-r2" style="text-align:right">20.4%</div>
+            </div>
+            <div class="decomp-row" style="opacity:0.5">
+              <div class="decomp-name"><code>channel_direct_sales</code> <span class="lagtag">lag 1</span></div>
+              <div class="decomp-val">0.00pp</div><div class="decomp-val">0.0%</div><div class="rel-r2" style="text-align:right">input = 0</div>
+            </div>
+            <div class="decomp-row" style="opacity:0.5">
+              <div class="decomp-name"><code>channel_freebies</code> <span class="lagtag">lag 1</span></div>
+              <div class="decomp-val">0.00pp</div><div class="decomp-val">0.0%</div><div class="rel-r2" style="text-align:right">input = 0</div>
             </div>
           </div>
-          <div class="note-box neutral" style="border-color:var(--line-dark);">
-            <div class="note-title">Note</div>
-            <div class="note-body">Channel share percentages are reference context; the contributions (+1.3pp, +0.3pp) and lags are the model's actual W20 output.</div>
+          <div class="note-box ok">
+            <div class="note-title">Read</div>
+            <div class="note-body">Within the marketing group, <strong>offline freebies carries ~80%</strong> of the effect (+1.33pp), influencer the remaining ~20% (+0.34pp). The signal is <strong>which channels bring customers in</strong> — offline-freebies acquisition surfaces as cancellations 2–3 weeks later (lag 2–3).</div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">So what</div>
+            <div class="note-body">Because the effect acts at a <strong>2–3 week lag</strong>, it's a <strong>leading indicator</strong>: the at-risk intake is visible weeks before it converts to cancellations. The lever is acquisition <strong>quality</strong> on offline-freebies — who it brings in — not how much is spent.</div>
           </div>
         </div>
 
@@ -641,7 +704,7 @@
           </div>
           <div class="note-box warn">
             <div class="note-title">Implication</div>
-            <div class="note-body"><code style="font-family:var(--mono);color:var(--d-red)">cancel_rates_lag1</code> carries a coefficient of <strong>0.31</strong> and explains <strong>32.5%</strong> of the estimated rate. Trial cancellations are largely <strong>inherited</strong> from the prior week's cohort — a one-week tactical tweak won't move it. This needs a structural onboarding intervention to break the persistence.</div>
+            <div class="note-body"><code style="font-family:var(--mono);color:var(--d-red)">cancel_rates_lag1</code> carries a coefficient of <strong>0.31</strong> and explains <strong>32.5%</strong> of the estimated rate. Trial cancellations are largely <strong>inherited</strong> from the prior week's cohort — a one-week tactical tweak won't move it. This needs a deeper onboarding intervention to break the persistence.</div>
           </div>
         </div>
 
@@ -665,17 +728,50 @@
           </div>
         </div>
 
+        <!-- STAGE 10 · DIRECTIONAL READ (amber cohorts) -->
+        <div class="stage" data-stage="10">
+          <div class="kicker"><span class="level-tag l2">L2</span> Directional read · watch-list cohorts <span class="qdot a" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">Read it — don't bet on it.</h2>
+          <p class="stage-desc">The amber cohorts are exactly the ones the trend shows drifting up. Their models are lower-confidence, so we point at the top driver without prescribing action — investigate, not act.</p>
+          <div class="card">
+            <div class="card-head"><span>Top driver · amber cohorts</span><span class="right">% of CR · W20</span></div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot a"></span>Medium</div><div class="rt">15.6% · ▲ +3.8pp/qtr</div></div>
+              <div class="dir-drv"><code>full_price</code> channel <span class="pp">+13%</span> &amp; <code>credit_card</code> <span class="pp">+8.7%</span> — partly offset by a protective product term.</div>
+              <div class="dir-cav">⚠ residual ~30%<br>model explains &lt;⅔ · R² 0.23</div>
+            </div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot a"></span>Established</div><div class="rt">7.7% · ▲ +1.6pp/qtr</div></div>
+              <div class="dir-drv">product / box-mix — <code>box_11×1</code> + <code>empty_conversion</code> <span class="pp">+14.3%</span>.</div>
+              <div class="dir-cav">⚠ lowest fit<br>R² 0.18</div>
+            </div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot a"></span>Mature</div><div class="rt">5.6% · ▲ +1.7pp/qtr</div></div>
+              <div class="dir-drv"><code>payment_success_rate</code> <span class="pp">+147%</span> of CR — single term carrying the whole decomposition.</div>
+              <div class="dir-cav red">⚠ sign-warning +<br>negative baseline · ≈ park</div>
+            </div>
+          </div>
+          <div class="note-box warn">
+            <div class="note-title">How to use this</div>
+            <div class="note-body">These reads are <strong>directional</strong>: low fit, and for <strong>Mature</strong> an unstable payment term that behaves like the parked Long-Term model. Treat as <strong>investigate / monitor</strong>, not act — they earn the look because they're the cohorts trending up (<strong>Medium +3.8pp</strong>, Established +1.6pp, Mature +1.7pp this quarter).</div>
+          </div>
+        </div>
+
         <!-- STAGE 8 · SYNTHESIS -->
         <div class="stage" data-stage="8">
           <div class="kicker"><span class="level-tag sum">Σ</span> Synthesis · the board one-pager</div>
           <h2 class="stage-title">Sweden, in five lines.</h2>
           <p class="stage-desc">The whole conversation, compressed to what a board needs to decide on.</p>
           <div class="exec-card">
-            <div class="exec-num"><div class="exec-n">1</div><div class="exec-t"><strong>Nothing's on fire.</strong> Blended cancel rate stable, no cohort crosses the anomaly threshold (max Z +0.9).</div></div>
-            <div class="exec-num"><div class="exec-n">2</div><div class="exec-t"><strong>The risk is structural and front-loaded.</strong> Trial (<span class="up">23.7%</span>) and New (<span class="up">17.6%</span>) carry the book; tenured cohorts sit at 5–8%.</div></div>
-            <div class="exec-num"><div class="exec-n">3</div><div class="exec-t"><strong>One clean lever this week:</strong> acquisition quality in New — <span class="up">offline-freebies (+1.3pp)</span> is importing early churn.</div></div>
-            <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>Trial needs an onboarding fix, not a tweak.</strong> 32.5% of its rate is momentum carried from the prior week.</div></div>
-            <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Half the ladder isn't model-mature yet.</strong> Act on New &amp; Trial; keep building data on the rest.</div></div>
+            <div class="exec-num"><div class="exec-n">1</div><div class="exec-t"><strong>Cancellations are front-loaded by tenure.</strong> Trial (<span class="up">23.7%</span>) and New (<span class="up">17.6%</span>) carry the book; tenured customers settle at 5–8%. The risk lives in the first weeks of a customer's life — not a one-off spike.</div></div>
+            <div class="exec-num"><div class="exec-n">2</div><div class="exec-t"><strong>One clean lever this week:</strong> acquisition quality in New — <span class="up">offline-freebies (+1.33pp)</span> is importing early churn.</div></div>
+            <div class="exec-num"><div class="exec-n">3</div><div class="exec-t"><strong>Trial needs an onboarding fix, not a tweak.</strong> 32.5% of its rate is momentum carried from the prior week (autoregressive term).</div></div>
+            <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>Long-Term isn't model-mature here.</strong> Its baseline is 249% of the observed rate — surfaced but parked.</div></div>
+            <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Act on green, watch amber, park red.</strong> New &amp; Trial are decision-grade; keep building data on the rest.</div></div>
+          </div>
+          <div class="note-box warn" style="margin-bottom:14px;">
+            <div class="note-title">Direction</div>
+            <div class="note-body">Attribution is the <strong>W20</strong> decomposition; the <strong>26-week history</strong> shows most cohorts drifting up this quarter (<strong>Medium +3.8pp</strong>, <strong>Long-Term +2.7pp</strong>), while New eased. Level and direction now come from the same source — so the early-lifecycle pattern is confirmed, not easing.</div>
           </div>
           <div class="card">
             <div class="card-head"><span>Confidence ledger</span><span class="right">what we'll act on</span></div>
@@ -733,6 +829,15 @@
     { key:'Long-Term',    rate:6.7, base:13.7, r2:0.22, q:'r', verdict:'park',  life:5 }
   ];
 
+  // ====================================================
+  // WEEKLY HISTORY · Sweden (TV) · last 26 weeks to 2026-05-11 (= W20)
+  // VERBATIM from [HF_Retention]_json_historical_cr.json
+  // each row: [week, cancel_rate (0-1), active_customers]
+  // ====================================================
+  const TV_HIST = {"Trial":[["2025-11-10",0.228,616],["2025-11-17",0.215,597],["2025-11-24",0.207,519],["2025-12-01",0.224,451],["2025-12-08",0.253,423],["2025-12-15",0.234,390],["2025-12-22",0.197,338],["2026-01-05",0.12,347],["2026-01-12",0.135,641],["2026-01-19",0.141,1038],["2026-01-26",0.197,1203],["2026-02-02",0.223,1053],["2026-02-09",0.228,1045],["2026-02-16",0.197,1041],["2026-02-23",0.229,1026],["2026-03-02",0.246,845],["2026-03-09",0.202,690],["2026-03-16",0.218,738],["2026-03-23",0.22,782],["2026-03-30",0.228,704],["2026-04-06",0.26,665],["2026-04-13",0.231,597],["2026-04-20",0.228,581],["2026-04-27",0.231,630],["2026-05-04",0.241,595],["2026-05-11",0.237,512]],"New":[["2025-11-10",0.2,399],["2025-11-17",0.179,386],["2025-11-24",0.189,405],["2025-12-01",0.192,394],["2025-12-08",0.189,371],["2025-12-15",0.176,318],["2025-12-22",0.089,307],["2026-01-05",0.137,271],["2026-01-12",0.155,245],["2026-01-19",0.161,274],["2026-01-26",0.143,446],["2026-02-02",0.168,694],["2026-02-09",0.165,818],["2026-02-16",0.161,792],["2026-02-23",0.183,739],["2026-03-02",0.191,694],["2026-03-09",0.176,708],["2026-03-16",0.2,577],["2026-03-23",0.161,523],["2026-03-30",0.19,496],["2026-04-06",0.161,529],["2026-04-13",0.186,502],["2026-04-20",0.188,454],["2026-04-27",0.181,410],["2026-05-04",0.202,394],["2026-05-11",0.176,416]],"Medium":[["2025-11-10",0.145,413],["2025-11-17",0.126,398],["2025-11-24",0.152,368],["2025-12-01",0.141,353],["2025-12-08",0.128,332],["2025-12-15",0.128,349],["2025-12-22",0.174,329],["2026-01-05",0.103,340],["2026-01-12",0.103,335],["2026-01-19",0.098,310],["2026-01-26",0.131,292],["2026-02-02",0.131,259],["2026-02-09",0.118,267],["2026-02-16",0.135,372],["2026-02-23",0.163,497],["2026-03-02",0.117,598],["2026-03-09",0.115,650],["2026-03-16",0.131,727],["2026-03-23",0.112,714],["2026-03-30",0.139,660],["2026-04-06",0.13,574],["2026-04-13",0.118,545],["2026-04-20",0.152,484],["2026-04-27",0.135,471],["2026-05-04",0.128,442],["2026-05-11",0.156,413]],"Established":[["2025-11-10",0.093,433],["2025-11-17",0.087,456],["2025-11-24",0.105,463],["2025-12-01",0.089,470],["2025-12-08",0.08,482],["2025-12-15",0.104,473],["2025-12-22",0.089,476],["2026-01-05",0.088,473],["2026-01-12",0.077,474],["2026-01-19",0.081,490],["2026-01-26",0.07,496],["2026-02-02",0.082,492],["2026-02-09",0.061,496],["2026-02-16",0.075,480],["2026-02-23",0.067,462],["2026-03-02",0.078,440],["2026-03-09",0.069,414],["2026-03-16",0.062,414],["2026-03-23",0.08,464],["2026-03-30",0.088,536],["2026-04-06",0.081,574],["2026-04-13",0.055,622],["2026-04-20",0.09,669],["2026-04-27",0.087,678],["2026-05-04",0.116,644],["2026-05-11",0.077,641]],"Mature":[["2025-11-10",0.065,333],["2025-11-17",0.037,328],["2025-11-24",0.055,322],["2025-12-01",0.049,317],["2025-12-08",0.056,310],["2025-12-15",0.048,296],["2025-12-22",0.066,288],["2026-01-05",0.043,294],["2026-01-12",0.031,282],["2026-01-19",0.055,271],["2026-01-26",0.041,262],["2026-02-02",0.062,254],["2026-02-09",0.039,260],["2026-02-16",0.032,266],["2026-02-23",0.055,278],["2026-03-02",0.062,269],["2026-03-09",0.037,283],["2026-03-16",0.041,287],["2026-03-23",0.035,298],["2026-03-30",0.047,289],["2026-04-06",0.066,297],["2026-04-13",0.064,295],["2026-04-20",0.081,282],["2026-04-27",0.059,279],["2026-05-04",0.054,296],["2026-05-11",0.056,283]],"Long-Term":[["2025-11-10",0.058,151],["2025-11-17",0.039,160],["2025-11-24",0.042,165],["2025-12-01",0.032,173],["2025-12-08",0.059,174],["2025-12-15",0.042,185],["2025-12-22",0.035,184],["2026-01-05",0.035,179],["2026-01-12",0.04,187],["2026-01-19",0.02,200],["2026-01-26",0.046,206],["2026-02-02",0.047,215],["2026-02-09",0.04,220],["2026-02-16",0.037,223],["2026-02-23",0.057,223],["2026-03-02",0.05,232],["2026-03-09",0.056,235],["2026-03-16",0.038,242],["2026-03-23",0.037,242],["2026-03-30",0.031,249],["2026-04-06",0.052,245],["2026-04-13",0.042,243],["2026-04-20",0.05,236],["2026-04-27",0.068,231],["2026-05-04",0.061,229],["2026-05-11",0.067,232]]};
+  const TREND_ORDER = ['Trial','New','Medium','Established','Mature','Long-Term'];
+  const TREND_COLOR = { 'Trial':'#e8907f','New':'#e0b75c','Medium':'#cdd15e','Established':'#6fb6c0','Mature':'#9fd15e','Long-Term':'#8fa9e0' };
+
   // New cohort waterfall  (16.5 +1.7 +1.5 -1.5 -0.1 -0.5 = 17.6)
   const WF_NEW = {
     max: 20,
@@ -775,7 +880,7 @@
 
   const DECOMP_NEW = [
     { grp:'Marketing', name:'channel_freebies_offline', val:'+1.33', sign:'pos', lag:2, type:'lever',   typeLabel:'actionable lever' },
-    { grp:'Product',   name:'box · 8×1 preference',     val:'+1.51', sign:'pos', lag:4, type:'struct',  typeLabel:'structural' },
+    { grp:'Product',   name:'box · 8×1 preference',     val:'+1.51', sign:'pos', lag:4, type:'struct',  typeLabel:'inherent' },
     { grp:'Marketing', name:'channel_influencer',       val:'+0.34', sign:'pos', lag:3, type:'lever',   typeLabel:'actionable lever' },
     { grp:'Logistics', name:'error_rates',              val:'−0.06', sign:'neg', lag:1, type:'struct',  typeLabel:'negligible' },
     { grp:'Payment',   name:'pay_method · no_transaction', val:'−1.54', sign:'neg', lag:4, type:'protect', typeLabel:'protective' }
@@ -783,7 +888,7 @@
 
   const DECOMP_TRIAL = [
     { grp:'Momentum', name:'cancel_rates_lag1', val:'+7.49', sign:'pos', lag:1, type:'flag',    typeLabel:'autoregressive' },
-    { grp:'Payment',  name:'pay_method · paypal', val:'+0.44', sign:'pos', lag:4, type:'struct',  typeLabel:'structural' },
+    { grp:'Payment',  name:'pay_method · paypal', val:'+0.44', sign:'pos', lag:4, type:'struct',  typeLabel:'inherent' },
     { grp:'Logistics', name:'error_rates',        val:'−0.37', sign:'neg', lag:2, type:'protect', typeLabel:'protective' }
   ];
 
@@ -939,6 +1044,91 @@
       <div class="mom-seg other" style="flex:1 1 auto"></div>`;
   }
 
+  // ----- weekly trend (real history; blend computed from active_customers) -----
+  function computeBlend() {
+    const n = TV_HIST['Trial'].length;
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      let num = 0, den = 0;
+      TREND_ORDER.forEach(k => { const d = TV_HIST[k][i]; num += d[1]*d[2]; den += d[2]; });
+      out.push(den ? num/den : 0);
+    }
+    return out;
+  }
+  function deltaTag(now, prev) {
+    const pp = (now - prev) * 100;
+    const cls = Math.abs(pp) < 0.3 ? 'flat' : (pp > 0 ? 'up' : 'down');
+    const arrow = cls === 'flat' ? '→' : (pp > 0 ? '▲' : '▼');
+    const txt = (pp >= 0 ? '+' : '−') + Math.abs(pp).toFixed(1) + 'pp';
+    return { cls, html: `${arrow} ${cls === 'flat' ? '0.0pp' : txt}` };
+  }
+  function renderTrend() {
+    const weeks = TV_HIST['Trial'].map(d => d[0]);
+    const n = weeks.length;
+    const blend = computeBlend();
+    let maxv = 0;
+    TREND_ORDER.forEach(k => TV_HIST[k].forEach(d => { if (d[1] > maxv) maxv = d[1]; }));
+    const maxY = Math.ceil((maxv * 100) / 5) * 5;            // % axis ceiling (→30)
+    const W = 640, H = 280, L = 32, R = 14, T = 12, B = 30;
+    const pw = W - L - R, ph = H - T - B;
+    const X = i => L + (n <= 1 ? 0 : (i / (n - 1)) * pw);
+    const Y = v => T + (1 - (v * 100) / maxY) * ph;          // v in 0..1
+    const pts = arr => arr.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+
+    // gridlines + y ticks (every 5%, label every 10%)
+    let grid = '';
+    for (let t = 0; t <= maxY; t += 5) {
+      const y = Y(t / 100);
+      grid += `<line class="trend-grid" x1="${L}" y1="${y.toFixed(1)}" x2="${W - R}" y2="${y.toFixed(1)}"/>`;
+      if (t % 10 === 0) grid += `<text class="trend-tick" x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${t}%</text>`;
+    }
+    // x labels at month boundaries
+    let xlab = '';
+    const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let prevMon = '';
+    weeks.forEach((w, i) => {
+      const m = w.slice(5, 7);
+      if (m !== prevMon) {
+        prevMon = m;
+        xlab += `<text class="trend-tick" x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle">${MON[parseInt(m,10)-1]}</text>`;
+      }
+    });
+    // W20 anchor line
+    const ax = X(n - 1);
+    const anchor = `<line class="trend-anchor" x1="${ax.toFixed(1)}" y1="${T}" x2="${ax.toFixed(1)}" y2="${T + ph}"/>`
+      + `<text class="trend-tick" x="${(ax - 3).toFixed(1)}" y="${T + 9}" text-anchor="end" style="fill:#cdd5cc">W20</text>`;
+
+    // cohort lines + end dots
+    let lines = '', dots = '';
+    TREND_ORDER.forEach(k => {
+      const series = TV_HIST[k].map(d => d[1]);
+      lines += `<polyline class="trend-line" stroke="${TREND_COLOR[k]}" points="${pts(series)}"/>`;
+      dots  += `<circle class="trend-dot" cx="${X(n-1).toFixed(1)}" cy="${Y(series[n-1]).toFixed(1)}" r="3" fill="${TREND_COLOR[k]}"/>`;
+    });
+    // blend line on top
+    lines += `<polyline class="trend-line blend" points="${pts(blend)}"/>`;
+    dots  += `<circle class="trend-dot" cx="${X(n-1).toFixed(1)}" cy="${Y(blend[n-1]).toFixed(1)}" r="3.5" fill="#fff"/>`;
+
+    document.getElementById('trend-chart').innerHTML =
+      `<svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`
+      + grid + anchor + lines + dots + xlab + `</svg>`;
+
+    // legend with latest value + Δ vs 4 weeks
+    const rows = TREND_ORDER.map(k => {
+      const s = TV_HIST[k];
+      const now = s[n-1][1], prev = s[n-5][1];
+      const d = deltaTag(now, prev);
+      return `<div class="tl-row"><span class="tl-sw" style="background:${TREND_COLOR[k]}"></span>`
+        + `<span class="tl-name">${k}</span><span class="tl-val">${(now*100).toFixed(1)}%</span>`
+        + `<span class="tl-delta ${d.cls}">${d.html}</span></div>`;
+    }).join('');
+    const bd = deltaTag(blend[n-1], blend[n-5]);
+    const blendRow = `<div class="tl-row blend"><span class="tl-sw"></span>`
+      + `<span class="tl-name">Sweden · blend</span><span class="tl-val">${(blend[n-1]*100).toFixed(1)}%</span>`
+      + `<span class="tl-delta ${bd.cls}">${bd.html}</span></div>`;
+    document.getElementById('trend-legend').innerHTML = blendRow + rows;
+  }
+
   // build all static visuals once
   function buildVisuals() {
     renderTenureCards();
@@ -951,6 +1141,7 @@
     renderDecomp('decomp-new', DECOMP_NEW);
     renderDecomp('decomp-trial', DECOMP_TRIAL);
     renderMomentum();
+    renderTrend();
   }
 
   function animateGradBars() {
@@ -969,9 +1160,18 @@
       label:'The headline', level:1, stage:1,
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"Morning. Quick read on Sweden before the board call — how are cancellations tracking this week, and is anything on fire?" },
-        { role:'bot', name:'Retention Copilot', content:"Morning. Week 20, Sweden. Short version: <strong>nothing's on fire.</strong> The blended cancel rate is stable and no cohort crosses the anomaly threshold — max Z is <code>+0.9</code>, well under 1.5." },
-        { role:'bot', name:'Retention Copilot', content:"The real story is <em>where</em> cancellations sit. They're steeply front-loaded by tenure:", extra:'tenuretable' },
+        { role:'bot', name:'Retention Copilot', content:"Morning. Let me give you the latest closed week — W20 — then the trend behind it. The headline: nothing's spiking, but cancellations are steeply <strong>front-loaded by tenure</strong>." },
+        { role:'bot', name:'Retention Copilot', content:"Here's where they sit this week:", extra:'tenuretable' },
         { role:'bot', name:'Retention Copilot', content:"<strong>Trial</strong> cancels at 23.7%, <strong>New</strong> at 17.6% — then it falls off for tenured customers (Mature 5.6%). Retention risk in Sweden is essentially an <em>onboarding</em> problem, not a base problem." }
+      ]
+    },
+    {
+      label:'Direction', level:1, stage:9,
+      chat:[
+        { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"And are we improving or getting worse — week over week?" },
+        { role:'bot', name:'Retention Copilot', content:"Mixed — and the mix is the story. Flat at the surface, drifting up underneath. Here's the last 26 weeks." },
+        { role:'bot', name:'Retention Copilot', content:"At market level the blended rate is <strong>~13.6%</strong> — broadly flat, after the usual January dip. But the blend hides the cohorts underneath:", extra:'trendmini' },
+        { role:'bot', name:'Retention Copilot', content:"Over the last quarter <strong style='color:#b03a2e'>Medium (+3.8pp)</strong> and <strong style='color:#b03a2e'>Long-Term (+2.7pp)</strong> have drifted up the most, with Established and Mature also rising — while <strong style='color:#6aa121'>New eased −1.0pp</strong> in the last month. So W20 isn't a one-off: early tenure stays high, and the mid-tenure cohorts are quietly worsening. <em>That's</em> what to watch." }
       ]
     },
     {
@@ -987,7 +1187,7 @@
       label:'Into the green', level:2, stage:3,
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"Good. Then take me into the green. What's actually driving the New-customer cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% is <strong>baseline — 16.5pp</strong>. That's the structural propensity of these customers to leave, regardless of anything we did this week. It's the cohort, not a lever." },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% is <strong>baseline — 16.5pp</strong>. That's the built-in tendency of brand-new customers to leave, regardless of anything we did this week. It's the cohort, not a lever." },
         { role:'bot', name:'Retention Copilot', content:"On top of baseline, three things move the needle: <strong style='color:#b03a2e'>Marketing +1.7pp</strong> (pushes cancels up), <strong style='color:#b03a2e'>Product +1.5pp</strong> up, and <strong style='color:#6aa121'>Payment −1.5pp</strong> — actually protective. Net of a small residual, that's the observed 17.6%." }
       ]
     },
@@ -995,8 +1195,8 @@
       label:'Acquisition mix', level:2, stage:4,
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"\"Marketing mix\" — translate that for me." },
-        { role:'bot', name:'Retention Copilot', content:"It's the channel customers came in through. The upward pressure is concentrated in <strong>offline \"freebies\" acquisition</strong> (surfacing at a 2–3 week lag) plus a smaller <strong>influencer</strong> contribution. Customers from those two channels are cancelling earlier than the rest." },
-        { role:'bot', name:'Retention Copilot', content:"And channel <em>shares</em> are stable week-on-week — no concentration shock. So this is a <strong>quality-of-acquisition</strong> signal, not a volume spike." }
+        { role:'bot', name:'Retention Copilot', content:"It's the channel customers came in through. The model splits marketing into four channel terms — the upward pressure is concentrated in <strong>offline \"freebies\" acquisition</strong> (~80% of the group, surfacing at a 2-week lag) plus a smaller <strong>influencer</strong> contribution (~20%, lag 3)." },
+        { role:'bot', name:'Retention Copilot', content:"It's a <strong>quality-of-acquisition</strong> signal: these two channels bring in customers who cancel faster than the rest. And because it lands at a <strong>2–3 week lag</strong>, it's a leading indicator — we can see the at-risk intake before the cancellations actually hit, and steer acquisition there." }
       ]
     },
     {
@@ -1004,7 +1204,7 @@
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"Give me the exact sub-drivers for New. All the way down." },
         { role:'bot', name:'Retention Copilot', content:"Full decomposition — every term, signed, with its lag:", extra:'decompnew' },
-        { role:'bot', name:'Retention Copilot', content:"The single <strong>actionable lever</strong> is <code>freebies_offline</code> at +1.3pp. The box-size preference (+1.5pp) is structural — a product signal, not a quick fix. And <code>no_transaction</code> at lag 4 is quietly protective (−1.5pp)." }
+        { role:'bot', name:'Retention Copilot', content:"The single <strong>actionable lever</strong> is <code>freebies_offline</code> at +1.3pp. The box-size preference (+1.5pp) is a product signal — a customer characteristic, not a lever you can pull this week. And <code>no_transaction</code> at lag 4 is quietly protective (−1.5pp)." }
       ]
     },
     {
@@ -1012,7 +1212,16 @@
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"Now Trial — that's our worst at 24%. Same pattern as New?" },
         { role:'bot', name:'Retention Copilot', content:"No — Trial is a different animal. Its dominant driver isn't marketing or product, it's <strong>momentum</strong>: last week's cancel rate explains <strong>32.5%</strong> of this week's estimate.", extra:'decomptrial' },
-        { role:'bot', name:'Retention Copilot', content:"In plain terms: Trial cancellations are mostly <em>inherited</em> from the prior week's cohort behavior, not caused by a fresh shock. A one-week tweak won't move it — it needs a structural <strong>onboarding intervention</strong> to break the persistence." }
+        { role:'bot', name:'Retention Copilot', content:"In plain terms: Trial cancellations are mostly <em>inherited</em> from the prior week's cohort behavior, not caused by a fresh shock. A one-week tweak won't move it — it needs a deeper <strong>onboarding intervention</strong> to break the persistence." }
+      ]
+    },
+    {
+      label:'The watch-list', level:2, stage:10,
+      chat:[
+        { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"And the ones you flagged amber — Medium's climbing the fastest. Anything we can read there, even directionally?" },
+        { role:'bot', name:'Retention Copilot', content:"Yes — with a health warning. These three are <strong>directional</strong>: lower model fit, so I'll point, not prescribe.", extra:'dirmini' },
+        { role:'bot', name:'Retention Copilot', content:"<strong>Medium</strong> (worst-trending): pressure from the <code>full_price</code> channel (+13%) and <code>credit_card</code> (+8.7%) — but its residual is ~30%, so read it loosely. <strong>Established</strong>: product / box-mix (+14%). <strong>Mature</strong>: a <code>payment_success_rate</code> term at +147%, but that one has a sign-warning and an implausible baseline — I treat it almost like <em>park</em>, same as Long-Term." },
+        { role:'bot', name:'Retention Copilot', content:"Bottom line: <strong>investigate, not act.</strong> They earn a look precisely because they're the cohorts the trend shows drifting up." }
       ]
     },
     {
@@ -1027,7 +1236,7 @@
       label:'The one-pager', level:0, stage:8,
       chat:[
         { role:'user', name:'Annika', sub:'VP Growth · Nordics', content:"Perfect. Give me the one-paragraph version for the board." },
-        { role:'bot', name:'Retention Copilot', content:"<strong>Sweden, week 20.</strong> Nothing's on fire — cancellations are stable and within normal range. The risk is structural and front-loaded: Trial (24%) and New (18%) drive the book. The one clean, actionable lever this week is <strong>acquisition quality in New</strong> — offline freebies are importing early churn. Trial is momentum-driven and needs an onboarding fix, not a weekly tweak. Half the tenure ladder isn't model-mature yet, so for now we act on New &amp; Trial and keep building data on the rest.", extra:'decision' }
+        { role:'bot', name:'Retention Copilot', content:"<strong>Sweden, week 20.</strong> Blended cancel rate ~13.6%, broadly flat at market level — but the 26-week trend shows most cohorts drifting up this quarter, <strong>Medium and Long-Term</strong> most. Cancellations are concentrated in the first weeks of a customer's life: Trial (24%) and New (18%) drive the book, tenured customers far lower — a persistent lifecycle pattern, not a one-off spike. The one clean, actionable lever is <strong>acquisition quality in New</strong> — offline freebies are importing early churn. Trial is momentum-driven and needs an onboarding fix, not a weekly tweak. Half the tenure ladder isn't model-mature yet, so for now we act on New &amp; Trial and keep building data on the rest.", extra:'decision' }
       ]
     }
   ];
@@ -1077,6 +1286,25 @@
     }
     if (type === 'reliability') {
       return `<div class="chat-callout">Act on <span class="dot g"></span> green · watch <span class="dot a"></span> amber · park <span class="dot r"></span> red. The right panel shows the full confidence ledger.</div>`;
+    }
+    if (type === 'trendmini') {
+      return `<div class="chat-mini">
+        <div class="chat-mini-row head"><div>Cohort</div><div>W20</div><div>Δ quarter</div></div>
+        <div class="chat-mini-row"><div>Trial</div><div>23.7%</div><div class="v-hi">▲ +0.9pp</div></div>
+        <div class="chat-mini-row"><div>New</div><div>17.6%</div><div class="v-hi">▲ +1.1pp</div></div>
+        <div class="chat-mini-row"><div>Medium</div><div>15.6%</div><div class="v-hi">▲ +3.8pp</div></div>
+        <div class="chat-mini-row"><div>Established</div><div>7.7%</div><div class="v-hi">▲ +1.6pp</div></div>
+        <div class="chat-mini-row"><div>Mature</div><div>5.6%</div><div class="v-hi">▲ +1.7pp</div></div>
+        <div class="chat-mini-row"><div>Long-Term</div><div>6.7%</div><div class="v-hi">▲ +2.7pp</div></div>
+      </div>`;
+    }
+    if (type === 'dirmini') {
+      return `<div class="chat-mini">
+        <div class="chat-mini-row head"><div>Cohort</div><div>Top driver</div><div>Flag</div></div>
+        <div class="chat-mini-row"><div>Medium</div><div class="v-hi">full_price +13%</div><div>⚠ residual</div></div>
+        <div class="chat-mini-row"><div>Established</div><div class="v-hi">box-mix +14%</div><div>⚠ low R²</div></div>
+        <div class="chat-mini-row"><div>Mature</div><div class="v-hi">pay_success +147%</div><div>⚠ sign-warn</div></div>
+      </div>`;
     }
     if (type === 'decompnew') {
       return `<div class="chat-mini">
@@ -1129,6 +1357,10 @@
     if (target) target.classList.add('active');
     panelBehind.scrollTop = 0;
     if (steps[currentStep].stage === 1) setTimeout(animateGradBars, 120);
+    if (steps[currentStep].stage === 9) {
+      const svg = document.querySelector('#trend-chart .trend-svg');
+      if (svg) { svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw'); }
+    }
   }
 
   function renderStepper() {
