@@ -536,14 +536,18 @@
         <div class="stage" data-stage="0">
           <div class="kicker"><span class="level-tag l1">L1</span> Session context</div>
           <h2 class="stage-title">The retention copilot, listening.</h2>
-          <p class="stage-desc">Every week the model decomposes Sweden's cancel rate into a seasonal baseline plus the drivers that pushed it up or pulled it down — per tenure cohort. The conversation on the left is a real walk from headline to root cause.</p>
+          <p class="stage-desc">Every week the model decomposes Sweden's cancel rate into a baseline plus the drivers that pushed it up or pulled it down — per tenure cohort. The conversation on the left is a real walk from headline to root cause.</p>
           <div class="setup-grid">
             <div class="setup-item"><div class="setup-k">Market</div><div class="setup-v">Sweden <small>· code TV</small></div></div>
             <div class="setup-item"><div class="setup-k">Reporting week</div><div class="setup-v">W20 <small>· 2026</small></div></div>
             <div class="setup-item"><div class="setup-k">Method</div><div class="setup-v">Attribution <small>· baseline + driver decomposition</small></div></div>
             <div class="setup-item"><div class="setup-k">Cohorts modelled</div><div class="setup-v">6 <small>· Trial → Long-Term</small></div></div>
           </div>
-          <div class="note-box ok" style="margin-top:14px;">
+          <div class="note-box" style="margin-top:14px;">
+            <div class="note-title">The one word to know · baseline</div>
+            <div class="note-body"><strong>Baseline</strong> is the cancel rate we'd expect this group in a normal week — its built-in tendency to leave, before anything specific this week pushes it around. Everything <em>above</em> the baseline is what the drivers add — and that added part is what we attribute and can actually act on.</div>
+          </div>
+          <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
             <div class="note-body"><strong style="color:var(--d-red);">Red</strong> contributions push the cancel rate <strong>up</strong>; <strong style="color:var(--d-green);">green</strong> pulls it <strong>down</strong>. Separately, each cohort carries a model-confidence mark — <span class="qdot g"></span> decision-grade, <span class="qdot a"></span> directional, <span class="qdot r"></span> not yet mature. The bolder the dot, the more we trust the model — it's a confidence signal, <em>not</em> whether the number itself is good or bad.</div>
           </div>
@@ -553,7 +557,7 @@
         <div class="stage" data-stage="1">
           <div class="kicker"><span class="level-tag l1">L1</span> Cancel rate by cohort · W20 snapshot</div>
           <h2 class="stage-title">Front-loaded by tenure.</h2>
-          <p class="stage-desc">The W20 cancel rate is steeply tenure-graded: the book's risk lives in the first weeks of a customer's life. Each cohort's gap to its own seasonal baseline is what the driver views below decompose.</p>
+          <p class="stage-desc">The W20 cancel rate is steeply tenure-graded: the book's risk lives in the first weeks of a customer's life. Each cohort's gap to its own baseline is what the driver views below decompose.</p>
 
           <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
             <span class="badge neutral">Snapshot week · 2026-W20 (2026-05-11)</span>
@@ -596,10 +600,10 @@
         <div class="stage" data-stage="11">
           <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · Sweden blend</div>
           <h2 class="stage-title">Above what the model expects — nearly every week.</h2>
-          <p class="stage-desc">The seasonal <strong>baseline</strong> is what Sweden would cancel at on time-of-year alone. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — and that gap is the part that isn't seasonal.</p>
+          <p class="stage-desc">The <strong>baseline</strong> is what the model expects Sweden to cancel at in a normal week — its reference level. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — and that gap is the part the drivers explain, the bit we can act on.</p>
           <div class="note-box warn">
             <div class="note-title">What the gap says</div>
-            <div class="note-body">At W20, observed is <strong>13.6%</strong> against a baseline of <strong>10.7%</strong> — a <strong style="color:var(--d-red)">+2.9pp</strong> excess. The gap nearly closed in the January dip, then reopened through spring. That persistent excess is the <strong>addressable</strong> layer — acquisition quality in New, momentum in Trial — not a seasonal effect to ride out.</div>
+            <div class="note-body">At W20, observed is <strong>13.6%</strong> against a baseline of <strong>10.7%</strong> — a <strong style="color:var(--d-red)">+2.9pp</strong> excess. The gap nearly closed in the January dip, then reopened through spring. That persistent excess is the <strong>addressable</strong> layer — acquisition quality in New, momentum in Trial — not something to wait out.</div>
           </div>
           <div class="card">
             <div class="card-head"><span>Observed vs model baseline · Sweden blend · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
@@ -707,12 +711,12 @@
         <div class="stage" data-stage="6">
           <div class="kicker"><span class="level-tag l3">L3</span> Sub-driver decomposition · Trial <span class="qdot g" style="margin-left:4px;"></span></div>
           <h2 class="stage-title">Trial is momentum, not an event.</h2>
-          <p class="stage-desc">Our worst cohort at 23.7%. The dominant driver is <strong>momentum</strong> — an autoregressive term that's run ~30% of Trial's rate for over a month. So it's a <strong>standing condition</strong>, not last week's blip; the only fresh, week-specific inputs (PayPal, error rates) are small.</p>
+          <p class="stage-desc">Our worst cohort at 23.7%. The dominant driver is <strong>momentum</strong> — the rate's tendency to repeat itself week to week. It's run ~30% of Trial's rate for over a month, so it's a <strong>standing condition</strong>, not last week's blip; the only fresh, week-specific inputs (PayPal, error rates) are small.</p>
           <div class="card">
             <div class="card-head"><span>Trial · estimated CR composition</span><span class="right">share of CR estimate</span></div>
             <div class="mom-bar" id="mom-bar"></div>
             <div style="display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--d-muted); margin-top:4px;">
-              <span>seasonal baseline · 67.2%</span><span>momentum · 32.5%</span>
+              <span>baseline · 67.2%</span><span>momentum · 32.5%</span>
             </div>
           </div>
           <!-- prior-week momentum chain: ar_lag.pct_of_CR for TV_Trial, W16–W20, verbatim from model_A files -->
@@ -742,7 +746,7 @@
         <div class="stage" data-stage="12">
           <div class="kicker"><span class="level-tag l3">L3</span> Trial · inside the momentum <span class="qdot g" style="margin-left:4px;"></span></div>
           <h2 class="stage-title">What the momentum is dragging forward.</h2>
-          <p class="stage-desc">The lag-1 term doesn't carry a mystery — it carries <strong>0.31 of last week's whole cancel rate</strong>. And last week (W19) was itself mostly baseline plus its <em>own</em> momentum. One level back is enough to see the mechanism.</p>
+          <p class="stage-desc"><strong>Momentum is inertia.</strong> Trial's cancel rate is sticky — a high week tends to be followed by another high week. About a third of this week's rate is simply <strong>last week, repeating</strong>: not a fresh problem, a standing one. Here's exactly what it's carrying.</p>
           <div class="card">
             <div class="card-head"><span>Inside the momentum · what last week drags forward</span><span class="right">W19 → W20</span></div>
             <div style="font-family:var(--mono); font-size:10px; color:var(--d-soft); margin-bottom:7px;">Last week (W19) observed · <strong style="color:#fff">24.1%</strong></div>
@@ -1296,8 +1300,8 @@
       label:'Above expectation?', level:1, stage:11,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"And versus what the model expected — are we running hot, or is this just the season?" },
-        { role:'bot', name:'Retention Copilot', content:"Running a little hot. Here's the blended observed rate against the model's <strong>seasonal baseline</strong> — what Sweden 'should' cancel at for the time of year." },
-        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs <strong>10.7%</strong> expected — about <strong style='color:#9B2629'>+3pp</strong> of excess. It nearly closed in the January dip, then reopened. So this isn't the season — there's a persistent layer of churn the drivers explain, and <em>that's</em> the part we can act on." }
+        { role:'bot', name:'Retention Copilot', content:"Running a little hot. Here's the blended observed rate against the model's <strong>baseline</strong> — what it expects Sweden to cancel at in a normal week." },
+        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs <strong>10.7%</strong> expected — about <strong style='color:#9B2629'>+3pp</strong> of excess. It nearly closed in the January dip, then reopened. So it isn't just the baseline — there's a persistent layer of churn the drivers explain, and <em>that's</em> the part we can act on." }
       ]
     },
     {
@@ -1353,7 +1357,7 @@
       label:'Inside the momentum', level:3, stage:12,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Momentum from what, though? If it's dragging last week forward — what was last week actually made of?" },
-        { role:'bot', name:'Retention Copilot', content:"Let's open it up — one level. This week's <strong>7.49pp</strong> of momentum is exactly <strong>0.31 × last week's rate (24.1%)</strong>. And last week was itself about <strong>two-thirds baseline plus its own momentum</strong>:" },
+        { role:'bot', name:'Retention Copilot', content:"Think of momentum as <strong>inertia</strong> — Trial's rate is sticky, so a high week pulls the next one up. Concretely, about <strong>a third</strong> of this week's rate is just last week repeating (0.31 × last week's 24.1%). And last week was itself mostly baseline plus its own momentum:" },
         { role:'bot', name:'Retention Copilot', content:"So it isn't carrying a fixable shock forward — it's <strong>compounding the cohort's standing churn</strong>, week on week. Which is exactly why the fix is <strong>onboarding</strong>, not a weekly lever." }
       ]
     },
