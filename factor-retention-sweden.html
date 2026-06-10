@@ -545,7 +545,7 @@
           </div>
           <div class="note-box" style="margin-top:14px;">
             <div class="note-title">The one word to know · baseline</div>
-            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a specific, measured driver — what's left once we strip out everything we can explain. It sits high mostly because we're still <strong>missing signals</strong> for this group, <em>not</em> because it's a forecast of what "should" happen. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
+            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a specific, measured driver — what's left once we strip out everything we can explain. It sits high mostly because we're still <strong>missing signals</strong> for this group. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
           </div>
           <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
@@ -603,7 +603,7 @@
           <p class="stage-desc">Observed against the model's <strong>baseline</strong> — the part of the rate we <em>can't yet attribute</em> to measured drivers. The gap between the two lines is how much the drivers actually <em>explain</em>. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — so there's a real attributable layer on top of the large unexplained base, and that's the bit we can act on.</p>
           <div class="note-box warn">
             <div class="note-title">What the gap says</div>
-            <div class="note-body">At W20, observed (13.6%) sits <strong style="color:var(--d-soft)">+2.9pp</strong> above baseline (10.7%) — that gap is the part the measured drivers <em>explain</em>, and it's the bit we can act on (acquisition quality in New, momentum in Trial). It narrowed in the January dip, then widened through spring. The much larger baseline underneath is churn we <em>can't</em> yet attribute — missing signals, not something to wait out.</div>
+            <div class="note-body">At W20, observed (13.6%) sits <strong style="color:var(--d-soft)">+2.9pp</strong> above baseline (10.7%) — that gap is the part the measured drivers <em>explain</em>, and it's the bit we can act on (acquisition quality in New, momentum in Trial). It narrowed in the January dip, then widened through spring. The much larger baseline underneath is churn we <em>can't</em> yet attribute — signals we're still missing.</div>
           </div>
           <div class="card">
             <div class="card-head"><span>Observed vs model baseline · Sweden blend · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
@@ -1301,7 +1301,7 @@
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — versus what it's just not capturing?" },
         { role:'bot', name:'Retention Copilot', content:"Here's the blended observed rate against the model's <strong>baseline</strong> — the part it <em>can't</em> attribute to a measured driver." },
-        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs a <strong>10.7%</strong> baseline — about <strong style='color:#9B2629'>+2.9pp</strong>. That gap is the layer the measured drivers <em>explain</em>, and it's the part we can act on. The much bigger baseline underneath is churn we <em>can't</em> yet attribute — missing signals, not a forecast." }
+        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs a <strong>10.7%</strong> baseline — about <strong style='color:#9B2629'>+2.9pp</strong>. That gap is the layer the measured drivers <em>explain</em>, and it's the part we can act on. The much bigger baseline underneath is churn we <em>can't</em> yet attribute — signals we're still missing." }
       ]
     },
     {
@@ -1325,7 +1325,7 @@
       label:'Into the green', level:2, stage:3,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the green. What's actually driving the New-customer cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% sits in the <strong>baseline — 16.5pp</strong>. That's not a lever we pulled this week; it's the part of the rate we <em>can't yet explain</em> — partly normal early-lifecycle behaviour, but probably also factors we don't measure and limited data on this cohort. The drivers on top are the bit we can attribute and act on." },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% sits in the <strong>baseline — 16.5pp</strong>: the part of the rate the model <em>can't yet attribute</em> to a measured driver — likely factors we don't measure and limited data on this cohort. The drivers on top are the bit we can attribute and act on." },
         { role:'bot', name:'Retention Copilot', content:"On top of baseline, three things move the needle: <strong style='color:#9B2629'>Marketing +1.7pp</strong> (pushes cancels up), <strong style='color:#9B2629'>Product +1.5pp</strong> up, and <strong style='color:#2C7A2A'>Payment −1.5pp</strong> — actually protective. Net of a small residual, that's the observed 17.6%." }
       ]
     },
