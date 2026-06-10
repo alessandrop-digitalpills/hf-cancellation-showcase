@@ -738,6 +738,37 @@
           </div>
         </div>
 
+        <!-- STAGE 12 · INSIDE THE MOMENTUM (W19 → W20 autoregressive unpack, one level only) -->
+        <div class="stage" data-stage="12">
+          <div class="kicker"><span class="level-tag l3">L3</span> Trial · inside the momentum <span class="qdot g" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">What the momentum is dragging forward.</h2>
+          <p class="stage-desc">The lag-1 term doesn't carry a mystery — it carries <strong>0.31 of last week's whole cancel rate</strong>. And last week (W19) was itself mostly baseline plus its <em>own</em> momentum. One level back is enough to see the mechanism.</p>
+          <div class="card">
+            <div class="card-head"><span>Inside the momentum · what last week drags forward</span><span class="right">W19 → W20</span></div>
+            <div style="font-family:var(--mono); font-size:10px; color:var(--d-soft); margin-bottom:7px;">Last week (W19) observed · <strong style="color:#fff">24.1%</strong></div>
+            <div class="mom-bar" style="height:44px;">
+              <div class="mom-seg base" style="flex:0 0 64.3%"></div>
+              <div class="mom-seg ar" style="flex:0 0 29.7%"></div>
+              <div class="mom-seg other" style="flex:0 0 6.0%"></div>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:11px; font-family:var(--mono); font-size:10px; color:var(--d-soft);">
+              <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:2px;background:#3A3A35"></span>Baseline <strong style="color:#fff;margin-left:3px">15.5%</strong></span>
+              <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:2px;background:linear-gradient(135deg,#C9343A,#FF585D)"></span>Its own momentum (from W18) <strong style="color:#fff;margin-left:3px">7.1pp</strong></span>
+              <span style="display:inline-flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.14)"></span>Other (drivers · residual) <strong style="color:#fff;margin-left:3px">+1.5pp</strong></span>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; margin-top:18px; padding-top:16px; border-top:1px solid var(--line-dark); flex-wrap:wrap;">
+              <div style="font-family:var(--mono); font-size:11px; color:var(--d-soft);"><strong style="color:#fff">24.1%</strong> <span style="color:var(--d-muted)">last week</span></div>
+              <div style="font-family:var(--mono); font-size:12px; color:var(--d-red); font-weight:600;">× 0.31&nbsp;&nbsp;→</div>
+              <div style="font-family:var(--display); font-size:22px; font-weight:700; color:#fff; line-height:1;">7.49pp</div>
+              <div style="font-family:var(--mono); font-size:11px; color:var(--d-soft);">this week's momentum <span style="color:var(--d-muted)">· 32.5% of Trial's rate</span></div>
+            </div>
+          </div>
+          <div class="note-box warn">
+            <div class="note-title">Why it compounds</div>
+            <div class="note-body">The lag-1 term drags <strong>0.31 of last week's entire rate</strong> into this week — and last week was itself <strong>~⅔ baseline + its own momentum</strong> (carried from the week before). So the term <strong>compounds the cohort's standing churn</strong> week over week; it isn't remembering a fixable shock. That's why Trial needs an <strong>onboarding</strong> fix, not a weekly lever.</div>
+          </div>
+        </div>
+
         <!-- STAGE 7 · L3 LONG-TERM RED -->
         <div class="stage" data-stage="7">
           <div class="kicker"><span class="level-tag l3">L3</span> Transparency · the parked model <span class="qdot r" style="margin-left:4px;"></span></div>
@@ -796,7 +827,7 @@
             <div class="exec-num"><div class="exec-n">1</div><div class="exec-t"><strong>Cancellations are front-loaded by tenure.</strong> Trial (<span class="up">23.7%</span>) and New (<span class="up">17.6%</span>) carry the book; tenured customers settle at 5–8%. The risk lives in the first weeks of a customer's life — not a one-off spike.<button class="exec-jump" onclick="goToStep(3)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">2</div><div class="exec-t"><strong>One clean lever this week:</strong> acquisition quality in New — <span class="up">offline-freebies (+1.33pp)</span> is importing early churn.<button class="exec-jump" onclick="goToStep(6)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">3</div><div class="exec-t"><strong>Trial needs an onboarding fix, not a tweak.</strong> 32.5% of its rate is momentum carried from the prior week (autoregressive term).<button class="exec-jump" onclick="goToStep(8)">see it →</button></div></div>
-            <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>Long-Term isn't model-mature here.</strong> Its baseline is 249% of the observed rate — surfaced but parked.<button class="exec-jump" onclick="goToStep(10)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>Long-Term isn't model-mature here.</strong> Its baseline is 249% of the observed rate — surfaced but parked.<button class="exec-jump" onclick="goToStep(11)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Act on New &amp; Trial, watch the directional cohorts, park Long-Term.</strong> New &amp; Trial are decision-grade; keep building data on the rest.<button class="exec-jump" onclick="goToStep(4)">see it →</button></div></div>
           </div>
           <div class="note-box warn" style="margin-bottom:14px;">
@@ -1316,6 +1347,14 @@
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Now Trial — that's our worst at 24%. Same pattern as New?" },
         { role:'bot', name:'Retention Copilot', content:"No — Trial is a different animal. Its dominant driver isn't marketing or product, it's <strong>momentum</strong> — the autoregressive term. And it's not just this week: it's run <strong>27–33%</strong> of Trial's rate every week for over a month." },
         { role:'bot', name:'Retention Copilot', content:"So the rate is <em>inherited</em> week after week — a standing condition, not a fresh shock. A one-week tweak won't move it; it needs a deeper <strong>onboarding</strong> fix. The only fresh inputs this week are small and payment-side: <strong>PayPal (+0.44pp)</strong> and <strong>error rates (−0.37pp)</strong>." }
+      ]
+    },
+    {
+      label:'Inside the momentum', level:3, stage:12,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Momentum from what, though? If it's dragging last week forward — what was last week actually made of?" },
+        { role:'bot', name:'Retention Copilot', content:"Let's open it up — one level. This week's <strong>7.49pp</strong> of momentum is exactly <strong>0.31 × last week's rate (24.1%)</strong>. And last week was itself about <strong>two-thirds baseline plus its own momentum</strong>:" },
+        { role:'bot', name:'Retention Copilot', content:"So it isn't carrying a fixable shock forward — it's <strong>compounding the cohort's standing churn</strong>, week on week. Which is exactly why the fix is <strong>onboarding</strong>, not a weekly lever." }
       ]
     },
     {
