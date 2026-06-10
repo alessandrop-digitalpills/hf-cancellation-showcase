@@ -545,7 +545,7 @@
           </div>
           <div class="note-box" style="margin-top:14px;">
             <div class="note-title">The one word to know · baseline</div>
-            <div class="note-body"><strong>Baseline</strong> is the cancel rate we'd expect this group in a normal week — its built-in tendency to leave, before anything specific this week pushes it around. Everything <em>above</em> the baseline is what the drivers add — and that added part is what we attribute and can actually act on.</div>
+            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a specific, measured driver — what's left once we strip out everything we can explain. It sits high mostly because we're still <strong>missing signals</strong> for this group, <em>not</em> because it's a forecast of what "should" happen. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
           </div>
           <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
@@ -599,11 +599,11 @@
         <!-- STAGE 11 · BASELINE vs OBSERVED (market level) -->
         <div class="stage" data-stage="11">
           <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · Sweden blend</div>
-          <h2 class="stage-title">Above what the model expects — nearly every week.</h2>
-          <p class="stage-desc">The <strong>baseline</strong> is what the model expects Sweden to cancel at in a normal week — its reference level. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — and that gap is the part the drivers explain, the bit we can act on.</p>
+          <h2 class="stage-title">How much can we actually explain?</h2>
+          <p class="stage-desc">Observed against the model's <strong>baseline</strong> — the part of the rate we <em>can't yet attribute</em> to measured drivers. The gap between the two lines is how much the drivers actually <em>explain</em>. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — so there's a real attributable layer on top of the large unexplained base, and that's the bit we can act on.</p>
           <div class="note-box warn">
             <div class="note-title">What the gap says</div>
-            <div class="note-body">At W20, observed is <strong>13.6%</strong> against a baseline of <strong>10.7%</strong> — a <strong style="color:var(--d-red)">+2.9pp</strong> excess. The gap nearly closed in the January dip, then reopened through spring. That persistent excess is the <strong>addressable</strong> layer — acquisition quality in New, momentum in Trial — not something to wait out.</div>
+            <div class="note-body">At W20, observed (13.6%) sits <strong style="color:var(--d-soft)">+2.9pp</strong> above baseline (10.7%) — that gap is the part the measured drivers <em>explain</em>, and it's the bit we can act on (acquisition quality in New, momentum in Trial). It narrowed in the January dip, then widened through spring. The much larger baseline underneath is churn we <em>can't</em> yet attribute — missing signals, not something to wait out.</div>
           </div>
           <div class="card">
             <div class="card-head"><span>Observed vs model baseline · Sweden blend · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
@@ -636,7 +636,7 @@
         <div class="stage" data-stage="3">
           <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · New cohort <span class="qdot g" style="margin-left:4px;"></span></div>
           <h2 class="stage-title">Baseline does most of it. Three levers do the rest.</h2>
-          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate. The baseline is the built-in tendency of these customers to leave; the floating bars are this week's drivers on top of it.</p>
+          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate. The baseline is the part the model <em>can't yet attribute</em> to a measured driver — what's left unexplained; the floating bars are this week's measured drivers on top of it.</p>
           <div class="card">
             <div class="card-head"><span>New · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
             <div class="wf-wrap"><div id="wf-new"></div></div>
@@ -1239,10 +1239,10 @@
     const ax = X(n - 1);
     const anchor = `<line class="trend-anchor" x1="${ax.toFixed(1)}" y1="${T}" x2="${ax.toFixed(1)}" y2="${T + ph}"/>`
       + `<text class="trend-tick" x="${(ax - 3).toFixed(1)}" y="${T + 9}" text-anchor="end" style="fill:#cdd5cc">W20</text>`;
-    // shaded excess (observed sits above baseline every week): observed forward, baseline back
+    // shaded gap between observed and baseline = the layer the measured drivers explain (neutral fill)
     const gapPts = obs.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
       + ' ' + base.map((v, i) => `${X(n-1-i).toFixed(1)},${Y(base[n-1-i]).toFixed(1)}`).join(' ');
-    const fill = `<polygon points="${gapPts}" fill="rgba(255,88,93,0.15)" stroke="none"/>`;
+    const fill = `<polygon points="${gapPts}" fill="rgba(255,255,255,0.06)" stroke="none"/>`;
     const baseLine = `<polyline points="${pts(base)}" fill="none" stroke="var(--d-soft)" stroke-width="2" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
     const obsLine = `<polyline points="${pts(obs)}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`;
     const dots = `<circle cx="${ax.toFixed(1)}" cy="${Y(obs[n-1]).toFixed(1)}" r="3.5" fill="#fff" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`
@@ -1255,7 +1255,7 @@
       `<div style="display:flex;flex-wrap:wrap;gap:9px 22px;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--d-soft)">`
       + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;height:3px;background:#fff;border-radius:2px"></span>Observed <strong style="color:#fff;margin-left:2px">${o.toFixed(1)}%</strong></span>`
       + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;border-top:2px dashed var(--d-soft)"></span>Model baseline <strong style="color:#fff;margin-left:2px">${b.toFixed(1)}%</strong></span>`
-      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,88,93,0.35);border-radius:2px"></span>Excess vs baseline · W20 <strong style="color:var(--d-red);margin-left:2px">+${g.toFixed(1)}pp</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Explained by drivers · obs − baseline · W20 <strong style="color:var(--d-soft);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
       + `</div>`;
   }
 
@@ -1297,11 +1297,11 @@
       ]
     },
     {
-      label:'Above expectation?', level:1, stage:11,
+      label:'What can we explain?', level:1, stage:11,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"And versus what the model expected — are we running hot, or is this just the season?" },
-        { role:'bot', name:'Retention Copilot', content:"Running a little hot. Here's the blended observed rate against the model's <strong>baseline</strong> — what it expects Sweden to cancel at in a normal week." },
-        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs <strong>10.7%</strong> expected — about <strong style='color:#9B2629'>+3pp</strong> of excess. It nearly closed in the January dip, then reopened. So it isn't just the baseline — there's a persistent layer of churn the drivers explain, and <em>that's</em> the part we can act on." }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — versus what it's just not capturing?" },
+        { role:'bot', name:'Retention Copilot', content:"Here's the blended observed rate against the model's <strong>baseline</strong> — the part it <em>can't</em> attribute to a measured driver." },
+        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs a <strong>10.7%</strong> baseline — about <strong style='color:#9B2629'>+2.9pp</strong>. That gap is the layer the measured drivers <em>explain</em>, and it's the part we can act on. The much bigger baseline underneath is churn we <em>can't</em> yet attribute — missing signals, not a forecast." }
       ]
     },
     {
@@ -1325,7 +1325,7 @@
       label:'Into the green', level:2, stage:3,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the green. What's actually driving the New-customer cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% is <strong>baseline — 16.5pp</strong>. That's the built-in tendency of brand-new customers to leave, regardless of anything we did this week. It's the cohort, not a lever." },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% sits in the <strong>baseline — 16.5pp</strong>. That's not a lever we pulled this week; it's the part of the rate we <em>can't yet explain</em> — partly normal early-lifecycle behaviour, but probably also factors we don't measure and limited data on this cohort. The drivers on top are the bit we can attribute and act on." },
         { role:'bot', name:'Retention Copilot', content:"On top of baseline, three things move the needle: <strong style='color:#9B2629'>Marketing +1.7pp</strong> (pushes cancels up), <strong style='color:#9B2629'>Product +1.5pp</strong> up, and <strong style='color:#2C7A2A'>Payment −1.5pp</strong> — actually protective. Net of a small residual, that's the observed 17.6%." }
       ]
     },

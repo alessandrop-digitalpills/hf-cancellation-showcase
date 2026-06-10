@@ -546,7 +546,7 @@
           </div>
           <div class="note-box" style="margin-top:14px;">
             <div class="note-title">The one word to know · baseline</div>
-            <div class="note-body"><strong>Baseline</strong> is the cancel rate we'd expect this group in a normal week — its built-in tendency to leave, before anything specific this week pushes it around. Everything <em>above</em> the baseline is what the drivers add — and that added part is what we attribute and can actually act on.</div>
+            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a specific, measured driver — what's left once we strip out everything we can explain. It sits high mostly because we're still <strong>missing signals</strong> for this group, <em>not</em> because it's a forecast of what "should" happen. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
           </div>
           <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
@@ -600,11 +600,11 @@
         <!-- STAGE 11 · BASELINE vs OBSERVED (market level) -->
         <div class="stage" data-stage="11">
           <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · US blend</div>
-          <h2 class="stage-title">Tracking what the model expects.</h2>
-          <p class="stage-desc">The <strong>baseline</strong> is what the model expects the US to cancel at in a normal week — its reference level. Blended across all six cohorts (active-customer-weighted), observed and baseline hug each other: the market is broadly running <em>to plan</em>, not hot.</p>
+          <h2 class="stage-title">How much can we actually explain?</h2>
+          <p class="stage-desc">Observed against the model's <strong>baseline</strong> — the part of the rate we <em>can't yet attribute</em> to measured drivers. The gap between the two lines is how much the drivers actually <em>explain</em>. Blended across all six cohorts (active-customer-weighted), the lines hug each other — so market-wide we explain only a thin slice; most of the rate sits in the unexplained baseline.</p>
           <div class="note-box ok">
             <div class="note-title">What the gap says</div>
-            <div class="note-body">At W21, observed is <strong>6.8%</strong> against a baseline of <strong>6.5%</strong> — just <strong style="color:var(--d-soft)">+0.3pp</strong>. Observed ran <em>below</em> baseline through the winter, then crossed above in spring. And the tenured cohorts (Medium, Established, Mature) currently sit <strong>below</strong> their own baselines — the book is healthy. The addressable churn isn't spread across the market; it's concentrated up front, in <strong>Trial and New</strong>.</div>
+            <div class="note-body">At W21 observed (6.8%) sits just <strong style="color:var(--d-soft)">+0.3pp</strong> above baseline (6.5%) — so market-wide the measured drivers explain almost none of the rate; the rest is churn we don't yet capture. The tenured cohorts even sit <em>below</em> their baselines (drivers there are net-protective). The part we <em>can</em> explain and act on is concentrated up front, in <strong>Trial and New</strong>.</div>
           </div>
           <div class="card">
             <div class="card-head"><span>Observed vs model baseline · US blend · 26 weeks</span><span class="right">→ 2026-05-18 · W21</span></div>
@@ -637,7 +637,7 @@
         <div class="stage" data-stage="3">
           <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · Trial cohort <span class="qdot g" style="margin-left:4px;"></span></div>
           <h2 class="stage-title">Baseline does most of it. Acquisition does the rest.</h2>
-          <p class="stage-desc">Decomposing the Trial cohort's 19.5% observed cancel rate — our worst, but our most trusted model (R² 0.67). The baseline is the built-in tendency of these brand-new customers to leave; the floating bars are this week's drivers on top of it.</p>
+          <p class="stage-desc">Decomposing the Trial cohort's 19.5% observed cancel rate — our worst, but our most trusted model (R² 0.67). The baseline is the part the model <em>can't yet attribute</em> to a measured driver — what's left unexplained; the floating bars are this week's measured drivers on top of it.</p>
           <div class="card">
             <div class="card-head"><span>Trial · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
             <div class="wf-wrap"><div id="wf-trial"></div></div>
@@ -1242,7 +1242,7 @@
       `<div style="display:flex;flex-wrap:wrap;gap:9px 22px;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--d-soft)">`
       + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;height:3px;background:#fff;border-radius:2px"></span>Observed <strong style="color:#fff;margin-left:2px">${o.toFixed(1)}%</strong></span>`
       + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;border-top:2px dashed var(--d-soft)"></span>Model baseline <strong style="color:#fff;margin-left:2px">${b.toFixed(1)}%</strong></span>`
-      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Gap · observed − baseline · W21 <strong style="color:var(--d-soft);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Explained by drivers · obs − baseline · W21 <strong style="color:var(--d-soft);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
       + `</div>`;
   }
 
@@ -1285,11 +1285,11 @@
       ]
     },
     {
-      label:'Tracking to expectation?', level:1, stage:11,
+      label:'What can we explain?', level:1, stage:11,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"And versus what the model expected — are we running hot, or is this just normal?" },
-        { role:'bot', name:'Retention Copilot', content:"Normal, basically. Here's the blended observed rate against the model's <strong>baseline</strong> — what it expects the US to cancel at in a normal week." },
-        { role:'bot', name:'Retention Copilot', content:"The two lines hug each other. At W21 observed is <strong>6.8%</strong> vs <strong>6.5%</strong> expected — only <strong style='color:#7A6A1F'>+0.3pp</strong>. Observed even ran <em>below</em> baseline through the winter, and the tenured cohorts are sitting below their baselines right now — the book is healthy. So the churn worth acting on isn't market-wide; it's concentrated up front, in <strong>Trial and New</strong>." }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — versus what it's just not capturing?" },
+        { role:'bot', name:'Retention Copilot', content:"Honestly, not much of it market-wide. Here's the blended observed rate against the model's <strong>baseline</strong> — the part it <em>can't</em> attribute to a measured driver." },
+        { role:'bot', name:'Retention Copilot', content:"The two lines hug each other — at W21 observed (<strong>6.8%</strong>) is only <strong style='color:#7A6A1F'>+0.3pp</strong> above baseline (<strong>6.5%</strong>). That thin gap is all the measured drivers explain; the rest is churn we don't yet capture. The tenured cohorts even sit <em>below</em> their baselines. So the part we can actually explain and act on is concentrated up front, in <strong>Trial and New</strong>." }
       ]
     },
     {
@@ -1313,7 +1313,7 @@
       label:'Into the worst one · Trial', level:2, stage:3,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the worst one. What's actually driving the Trial cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing Trial. Most of the 19.5% is <strong>baseline — 16.6pp</strong>. That's the built-in tendency of brand-new customers to leave, regardless of anything we did this week. It's the cohort, not a lever." },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing Trial. Most of the 19.5% sits in the <strong>baseline — 16.6pp</strong>. That's not a lever we pulled this week; it's the part of the rate we <em>can't yet explain</em> — partly normal early-lifecycle behaviour, but probably also factors we don't measure and limited data on this cohort. The drivers on top are the bit we can attribute and act on." },
         { role:'bot', name:'Retention Copilot', content:"On top of baseline, the mover is <strong style='color:#9B2629'>Marketing +2.3pp</strong> — and almost all of it is one channel. Product adds a touch (+0.4pp), logistics trims a touch (−0.1pp). Net of a small residual, that's the observed 19.5%." }
       ]
     },
@@ -1362,7 +1362,7 @@
       label:'The one-pager', level:0, stage:8,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Perfect. Give me the one-paragraph version for the board." },
-        { role:'bot', name:'Retention Copilot', content:"<strong>US, week 21.</strong> Blended cancel rate ~6.8%, essentially tracking the model's 6.5% baseline — the market is calm and the tenured book is healthy, running at or below expectation. Cancellations are concentrated in the first weeks of a customer's life: Trial (19.5%) and New (13.8%) carry the book, tenured customers settle at 4–6%. The one clean, actionable lever is <strong>acquisition quality</strong> — Trial's direct-sales channel (+1.72pp, a 4-week leading indicator) is importing early churn, with New a softer multi-channel version of the same signal. The tenured cohorts run cool on non-actionable drivers, and Long-Term — nearly half the book — is too sparsely modelled to decompose. So we act on Trial &amp; New and monitor the rest.", extra:'decision' }
+        { role:'bot', name:'Retention Copilot', content:"<strong>US, week 21.</strong> Blended cancel rate ~6.8%; the measured drivers explain only a thin slice of it market-wide (+0.3pp above the model's 6.5% baseline), so most of the rate is still churn we can't yet attribute — and the tenured book runs at or below its baseline. Cancellations are concentrated in the first weeks of a customer's life: Trial (19.5%) and New (13.8%) carry the book, tenured customers settle at 4–6%. The one clean, actionable lever is <strong>acquisition quality</strong> — Trial's direct-sales channel (+1.72pp, a 4-week leading indicator) is importing early churn, with New a softer multi-channel version of the same signal. The tenured cohorts run cool on non-actionable drivers, and Long-Term — nearly half the book — is too sparsely modelled to decompose. So we act on Trial &amp; New and monitor the rest.", extra:'decision' }
       ]
     }
   ];
