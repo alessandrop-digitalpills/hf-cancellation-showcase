@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factor · Retention Intelligence — United States</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Factor brand — Carbon / Natural surfaces, accents used sparingly */
+    --bg: #F1F1EA;              /* Natural — light surface (conversation) */
+    --bg-panel: #FBFBF5;        /* card on Natural */
+    --bg-dark: #141414;         /* Carbon — dashboard surface */
+    --bg-dark-panel: #1E1E1C;   /* card on Carbon */
+    --bg-dark-card: #1A1A18;
+    --ink: #141414;             /* Carbon — text on Natural */
+    --ink-soft: #4A4A45;
+    --ink-muted: #8A8A80;
+    --line: #DAD8CC;
+    --line-dark: #33332E;
+    --accent: #9B2629;          /* Cherry — increases CR (bad), on light */
+    --accent-soft: #ecd6d2;
+    --green: #2C7A2A;           /* readable Pistachio/Basil — reduces CR, on light */
+    --green-bright: #75C26D;    /* Pistachio */
+    --green-soft: #d8ebcb;
+    --amber: #9A7712;           /* Dijon — directional/watch, on light */
+    --amber-soft: #ecdcb6;
+    --blue: #18849F;            /* Ocean */
+    --saffron: #FFC800;         /* primary CTA / highlight */
+    --serif: 'Plus Jakarta Sans', sans-serif;   /* (no serif in brand) */
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    --label: 'IBM Plex Sans', sans-serif;        /* preheaders / buttons */
+    --mono: 'IBM Plex Mono', monospace;          /* data tokens / numbers */
+    /* dark-panel data colors (on Carbon) */
+    --d-red: #FF585D;           /* Watermelon */
+    --d-green: #82CF78;         /* bright Pistachio */
+    --d-amber: #E6B53C;         /* bright Dijon */
+    --d-text: #F1F1EA;          /* Natural */
+    --d-soft: #B6B5AB;
+    --d-muted: #7C7C72;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ APP SHELL ============ */
+  .app { display: grid; grid-template-rows: auto 1fr auto; height: 100vh; }
+
+  /* ============ HEADER ============ */
+  header {
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  }
+  header .title { display: flex; align-items: center; gap: 16px; }
+  .brand-logo { height: 15px; width: auto; display: block; color: var(--ink); margin-right: 4px; }
+  .brand-logo path { fill: currentColor; }
+  header h1 {
+    font-family: var(--display);
+    font-weight: 600; font-size: 16px; letter-spacing: -0.01em;
+    color: var(--ink-soft);
+  }
+  header .subtitle {
+    font-size: 11px; color: var(--ink-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    font-family: var(--mono);
+  }
+  header .phase-indicator {
+    display: flex; gap: 18px; align-items: center;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  header .phase-chip {
+    display: flex; align-items: center; gap: 7px;
+    opacity: 0.3; transition: opacity 0.4s;
+  }
+  header .phase-chip.active { opacity: 1; }
+  header .phase-num {
+    width: 24px; height: 20px; border: 1px solid var(--ink);
+    border-radius: 4px; display: grid; place-items: center;
+    font-size: 9px; font-weight: 600;
+  }
+  header .phase-chip.active .phase-num { background: var(--ink); color: var(--bg); }
+  header .phase-chip.lv1.active .phase-num { background: var(--blue); border-color: var(--blue); }
+  header .phase-chip.lv2.active .phase-num { background: var(--amber); border-color: var(--amber); }
+  header .phase-chip.lv3.active .phase-num { background: var(--accent); border-color: var(--accent); }
+
+  /* ============ MAIN ============ */
+  main { display: grid; grid-template-columns: 3fr 7fr; overflow: hidden; position: relative; }
+  main::before {
+    content: ''; position: absolute; left: 30%; top: 0; bottom: 0;
+    width: 1px; background: var(--line); z-index: 2;
+  }
+
+  /* ============ LEFT PANEL (CHAT) ============ */
+  .panel-chat {
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 30px 30px 80px 30px;
+    scroll-behavior: smooth;
+  }
+  .panel-chat::-webkit-scrollbar { width: 6px; }
+  .panel-chat::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  .panel-label {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--ink-muted);
+    margin-bottom: 26px; display: flex; align-items: center; gap: 12px;
+  }
+  .panel-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+  .chat-bubble {
+    margin-bottom: 16px; opacity: 0; transform: translateY(12px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  .chat-bubble.visible { opacity: 1; transform: translateY(0); }
+  .chat-bubble.bot .bubble-meta { color: var(--green); }
+  .chat-bubble.user .bubble-meta { color: var(--accent); justify-content: flex-end; }
+  .bubble-meta {
+    display: flex; gap: 8px; align-items: center;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .bubble-meta .role { color: var(--ink-muted); text-transform: none; letter-spacing: 0; font-size: 10px; }
+  .bubble-content {
+    padding: 14px 18px; border-radius: 14px; font-size: 14px;
+    line-height: 1.58; max-width: 90%;
+  }
+  .chat-bubble.bot .bubble-content {
+    background: var(--bg-panel); border: 1px solid var(--line);
+    border-top-left-radius: 4px;
+  }
+  .chat-bubble.user .bubble-content {
+    background: var(--ink); color: #f0ede3; margin-left: auto;
+    border-top-right-radius: 4px;
+  }
+  .bubble-content strong { font-weight: 700; }
+  .bubble-content em { font-style: normal; font-weight: 600; }
+  .bubble-content code {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--green-soft); color: #2A5A14;
+    padding: 1px 6px; border-radius: 4px;
+  }
+  .chat-bubble.user .bubble-content code { background: rgba(255,255,255,0.16); color: #cfe3aa; }
+  .bubble-content ul { margin: 6px 0 0 0; padding-left: 16px; }
+  .bubble-content ul li { margin-bottom: 3px; font-size: 13px; }
+
+  .typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+  .typing span { width: 6px; height: 6px; background: var(--ink-muted); border-radius: 50%; animation: blink 1.4s infinite both; }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:.2;transform:scale(.8);} 40%{opacity:1;transform:scale(1);} }
+
+  /* chat inline mini list */
+  .chat-mini {
+    margin-top: 11px; border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
+    font-family: var(--mono); font-size: 11px;
+  }
+  .chat-mini-row {
+    display: grid; grid-template-columns: 1.4fr 0.7fr 0.9fr; gap: 8px;
+    padding: 7px 12px; border-bottom: 1px solid var(--line); align-items: center;
+  }
+  .chat-mini-row:last-child { border-bottom: none; }
+  .chat-mini-row.head { background: var(--bg); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+  .chat-mini .v-hi { color: var(--accent); font-weight: 600; }
+  .chat-mini .v-lo { color: var(--green); font-weight: 600; }
+  /* confidence mark — neutral dot, opacity = confidence (bold = trusted, faint = not); NOT a good/bad color */
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-sizing: border-box; background: var(--ink-muted); vertical-align: middle; }
+  .dot.g { opacity: 1; }
+  .dot.a { opacity: 0.55; }
+  .dot.r { opacity: 0.28; }
+
+  .chat-callout {
+    margin-top: 11px; border-left: 3px solid var(--green);
+    background: rgba(117,194,109,0.08); padding: 10px 14px; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.5;
+  }
+  .chat-callout.warn { border-color: var(--accent); background: rgba(255,88,93,0.07); }
+
+  .chat-action { margin-top: 12px; display: flex; gap: 8px; }
+  .chat-action button {
+    font-family: var(--label); font-size: 11px; padding: 9px 18px; letter-spacing: 0.04em;
+    border-radius: 999px; border: 1px solid var(--ink); background: transparent;
+    color: var(--ink); cursor: pointer; transition: all 0.2s; font-weight: 600;
+  }
+  .chat-action button.primary { background: var(--saffron); color: var(--ink); border-color: var(--saffron); }
+  .chat-action button:hover { transform: translateY(-1px); }
+
+  /* ============ RIGHT PANEL (DASHBOARD) ============ */
+  .panel-behind {
+    background: var(--bg-dark); color: var(--d-text);
+    overflow-y: auto; padding: 32px 40px 90px 40px; position: relative;
+  }
+  .panel-behind::-webkit-scrollbar { width: 6px; }
+  .panel-behind::-webkit-scrollbar-thumb { background: var(--line-dark); border-radius: 3px; }
+  .panel-behind .panel-label { color: var(--d-muted); }
+  .panel-behind .panel-label::after { background: var(--line-dark); }
+
+  .stage { display: none; opacity: 0; transition: opacity 0.6s; }
+  .stage.active { display: block; opacity: 1; animation: fadeUp 0.55s ease-out; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .kicker {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--d-muted); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .level-tag {
+    font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    padding: 2px 7px; border-radius: 4px; color: #fff;
+  }
+  .level-tag.l1 { background: var(--blue); }
+  .level-tag.l2 { background: var(--amber); }
+  .level-tag.l3 { background: var(--accent); }
+  .level-tag.sum { background: var(--green); }
+
+  .stage-title {
+    font-family: var(--display); font-weight: 600; font-style: normal;
+    font-size: 24px; margin-bottom: 6px; color: #fff; letter-spacing: -0.015em;
+  }
+  .stage-desc { color: var(--d-soft); font-size: 13px; margin-bottom: 24px; max-width: 460px; line-height: 1.6; }
+
+  /* generic dark card */
+  .card {
+    background: var(--bg-dark-panel); border: 1px solid var(--line-dark);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .card-head {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--d-soft); margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .card-head .right { color: var(--d-muted); }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border-radius: 20px; font-family: var(--mono);
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
+  }
+  .badge.ok { background: rgba(117,194,109,0.16); border: 1px solid rgba(130,207,120,0.4); color: var(--d-green); }
+  .badge.warn { background: rgba(255,88,93,0.14); border: 1px solid rgba(255,88,93,0.4); color: var(--d-red); }
+  .badge.neutral { background: rgba(255,255,255,0.05); border: 1px solid var(--line-dark); color: var(--d-soft); }
+
+  /* ===== tenure cards (L1) ===== */
+  .tenure-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .tenure-card {
+    border: 1px solid var(--line-dark); border-radius: 10px; padding: 12px 13px;
+    background: var(--bg-dark-card); position: relative; overflow: hidden;
+  }
+  .tenure-card.biz-up { border-color: rgba(255,88,93,0.4); }
+  .tenure-card.biz-down { border-color: rgba(130,207,120,0.4); }
+  .tenure-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+    background: var(--d-muted);
+  }
+  .tenure-card.biz-up::before { background: var(--d-red); }
+  .tenure-card.biz-down::before { background: var(--d-green); }
+  .tc-name { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--d-soft); display: flex; align-items: center; gap: 6px; margin-bottom: 7px; }
+  .tc-rate { font-family: var(--display); font-weight: 700; font-size: 26px; color: #fff; font-style: normal; line-height: 1; letter-spacing: -0.02em; }
+  .tc-sub { font-family: var(--mono); font-size: 10px; color: var(--d-muted); margin-top: 6px; }
+  /* confidence mark — neutral dot, opacity = confidence (bold = trusted, faint = not); NOT a good/bad color */
+  .qdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-sizing: border-box; background: var(--d-soft); vertical-align: middle; }
+  .qdot.g { opacity: 1; }
+  .qdot.a { opacity: 0.55; }
+  .qdot.r { opacity: 0.28; }
+
+  /* tenure gradient bars */
+  .grad-bars { display: flex; flex-direction: column; gap: 9px; }
+  .grad-row { display: grid; grid-template-columns: 78px 1fr 44px; align-items: center; gap: 10px; font-family: var(--mono); font-size: 10px; color: var(--d-soft); }
+  .grad-track { height: 18px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+  .grad-fill { height: 100%; border-radius: 3px; transition: width 1.1s cubic-bezier(.2,.7,.2,1); }
+  .grad-fill.reliable { background: linear-gradient(90deg, #C9343A, #FF585D); }
+  .grad-fill.muted { background: repeating-linear-gradient(45deg, rgba(255,88,93,0.45), rgba(255,88,93,0.45) 5px, rgba(255,88,93,0.2) 5px, rgba(255,88,93,0.2) 10px); }
+  .grad-val { text-align: right; color: #fff; font-weight: 600; }
+
+  /* ===== reliability matrix ===== */
+  .rel-row {
+    display: grid; grid-template-columns: 1.1fr 0.7fr 0.7fr 1.3fr 1fr; gap: 10px;
+    padding: 11px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center;
+    font-size: 12px;
+  }
+  .rel-row:last-child { border-bottom: none; }
+  .rel-row.head { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--d-muted); }
+  .rel-name { display: flex; align-items: center; gap: 8px; font-family: var(--serif); font-style: normal; font-size: 15px; color: #fff; }
+  .rel-name .qdot { flex-shrink: 0; }
+  .rel-r2 { font-family: var(--mono); }
+  .conf-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-top: 5px; }
+  .conf-fill { height: 100%; border-radius: 3px; }
+  .conf-fill.g { background: var(--d-soft); opacity: 1; }
+  .conf-fill.a { background: var(--d-soft); opacity: 0.55; }
+  .conf-fill.r { background: var(--d-soft); opacity: 0.28; }
+  .verdict { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .verdict.act { color: var(--d-green); }
+  .verdict.watch { color: var(--d-amber); }
+  .verdict.hold { color: var(--d-soft); }
+  .verdict.park { color: var(--d-red); }
+
+  /* ===== waterfall ===== */
+  .wf-wrap { position: relative; }
+  .wf-yaxis { position: absolute; left: 0; top: 0; bottom: 26px; width: 38px; }
+  .wf-ytick { position: absolute; right: 6px; transform: translateY(-50%); font-family: var(--mono); font-size: 9px; color: var(--d-muted); }
+  .wf-gridline { position: absolute; left: 38px; right: 0; border-top: 1px dashed rgba(255,255,255,0.06); }
+  .wf-plot { position: relative; margin-left: 38px; height: 230px; }
+  .wf-cols { position: absolute; inset: 0; display: flex; }
+  .wf-col { flex: 1; position: relative; }
+  .wf-bar { position: absolute; left: 16%; right: 16%; border-radius: 3px 3px 0 0; transition: height 0.8s ease, bottom 0.8s ease; }
+  .wf-bar.base, .wf-bar.result { background: #4A4A44; }
+  .wf-bar.result { background: #3A3A35; }
+  .wf-bar.pos { background: var(--d-red); }
+  .wf-bar.neg { background: var(--d-green); }
+  .wf-bar.posbig { background: var(--d-red); }
+  .wf-vlabel { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--mono); font-size: 10px; font-weight: 600; color: #fff; }
+  .wf-conn { position: absolute; border-top: 1px dashed rgba(255,255,255,0.25); height: 0; }
+  .wf-xlabels { display: flex; margin-left: 38px; margin-top: 8px; }
+  .wf-xlabel { flex: 1; text-align: center; font-family: var(--mono); font-size: 9px; color: var(--d-soft); line-height: 1.3; padding: 0 2px; }
+  .wf-legend { display: flex; gap: 16px; margin-top: 14px; font-family: var(--mono); font-size: 9px; color: var(--d-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .wf-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 10px; height: 10px; border-radius: 2px; }
+  .sw.pos { background: var(--d-red); } .sw.neg { background: var(--d-green); } .sw.base { background: #4A4A44; }
+
+  /* ===== group ranking pills ===== */
+  .rank-list { display: flex; flex-direction: column; gap: 8px; }
+  .rank-item { display: grid; grid-template-columns: 18px 1fr 64px; align-items: center; gap: 10px; }
+  .rank-num { font-family: var(--mono); font-size: 11px; color: var(--d-muted); }
+  .rank-bar-track { height: 22px; background: rgba(255,255,255,0.04); border-radius: 4px; position: relative; overflow: hidden; }
+  .rank-bar { position: absolute; top: 0; bottom: 0; }
+  .rank-bar.pos { background: rgba(255,88,93,0.55); }
+  .rank-bar.neg { background: rgba(130,207,120,0.5); }
+  .rank-label { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 11px; color: #fff; }
+  .rank-val { text-align: right; font-family: var(--mono); font-size: 12px; font-weight: 600; }
+  .rank-val.pos { color: var(--d-red); } .rank-val.neg { color: var(--d-green); }
+
+  /* ===== decomposition table ===== */
+  .decomp-row {
+    display: grid; grid-template-columns: 1.7fr 0.7fr 0.6fr 1fr; gap: 10px;
+    padding: 11px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; font-size: 12px;
+  }
+  .decomp-row:last-child { border-bottom: none; }
+  .decomp-row.head { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--d-muted); }
+  .decomp-name { color: #fff; }
+  .decomp-name .grp { font-family: var(--mono); font-size: 9px; color: var(--d-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
+  .decomp-name code { font-family: var(--mono); font-size: 11px; color: var(--d-soft); }
+  .decomp-val { font-family: var(--mono); font-weight: 600; text-align: right; }
+  .decomp-val.pos { color: var(--d-red); } .decomp-val.neg { color: var(--d-green); }
+  .lagtag { font-family: var(--mono); font-size: 9px; color: var(--d-muted); border: 1px solid var(--line-dark); padding: 1px 6px; border-radius: 4px; }
+  .tag-pill { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
+  .tag-pill.lever { background: rgba(255,88,93,0.16); color: var(--d-red); }
+  .tag-pill.protect { background: rgba(117,194,109,0.16); color: var(--d-green); }
+  .tag-pill.struct { background: rgba(255,255,255,0.05); color: var(--d-soft); }
+  .tag-pill.flag { background: rgba(255,88,93,0.2); color: var(--d-red); border: 1px solid rgba(255,88,93,0.5); }
+
+  /* ===== momentum viz ===== */
+  .mom-bar { display: flex; height: 54px; border-radius: 8px; overflow: hidden; margin: 6px 0 4px; border: 1px solid var(--line-dark); }
+  .mom-seg { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; font-family: var(--mono); }
+  .mom-seg.base { background: #3A3A35; }
+  .mom-seg.ar { background: linear-gradient(135deg, #C9343A, #FF585D); }
+  .mom-seg.other { background: rgba(255,255,255,0.08); }
+  .mom-seg .pct { font-size: 16px; font-weight: 600; }
+  .mom-seg .lbl { font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; margin-top: 2px; }
+
+  /* ===== channel mix ===== */
+  .chan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .chan-col-title { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--d-muted); margin-bottom: 10px; }
+  .chan-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 6px 0; font-size: 12px; align-items: center; }
+  .chan-row .nm { color: var(--d-soft); }
+  .chan-row .nm.flagged { color: var(--d-red); font-weight: 600; }
+  .chan-row .sh { font-family: var(--mono); color: var(--d-text); }
+  .chan-row .nm .micro { font-family: var(--mono); font-size: 9px; color: var(--d-muted); display: block; }
+
+  /* ===== exec summary ===== */
+  .exec-card {
+    border: 1px solid rgba(130,207,120,0.4); background: linear-gradient(160deg, rgba(117,194,109,0.1), rgba(117,194,109,0.02));
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 14px;
+  }
+  .exec-num { display: grid; grid-template-columns: 26px 1fr; gap: 12px; margin-bottom: 14px; align-items: start; }
+  .exec-num:last-child { margin-bottom: 0; }
+  .exec-n { width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+  .exec-t { font-size: 13px; line-height: 1.5; color: var(--d-text); }
+  .exec-t strong { color: #fff; }
+  .exec-t .up { color: var(--d-red); font-weight: 600; }
+  .exec-t .down { color: var(--d-green); font-weight: 600; }
+  .exec-jump { background: none; border: none; cursor: pointer; margin-left: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--d-green); border-bottom: 1px dashed rgba(130,207,120,0.5); padding: 0 0 1px; transition: color 0.2s; }
+  .exec-jump:hover { color: #fff; border-bottom-color: #fff; }
+  .rel-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rel-chip { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; padding: 5px 10px; border-radius: 6px; background: rgba(255,255,255,0.04); border: 1px solid var(--line-dark); color: var(--d-soft); }
+
+  .note-box {
+    border: 1px solid var(--line-dark); border-radius: 10px; padding: 13px 16px;
+    background: rgba(255,255,255,0.02); margin-top: 12px; margin-bottom: 14px;
+  }
+  .note-box.warn { border-color: rgba(255,88,93,0.4); background: rgba(255,88,93,0.05); }
+  .note-box.ok { border-color: rgba(130,207,120,0.35); background: rgba(117,194,109,0.05); }
+  .note-title { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; color: var(--d-soft); }
+  .note-box.warn .note-title { color: var(--d-red); }
+  .note-box.ok .note-title { color: var(--d-green); }
+  .note-body { font-size: 12px; color: var(--d-soft); line-height: 1.55; }
+  .note-body strong { color: #fff; }
+
+  /* sparkline */
+  .spark-wrap { display: flex; align-items: center; gap: 14px; }
+  .spark-meta { font-family: var(--mono); font-size: 10px; color: var(--d-muted); }
+
+  /* ===== weekly trend line chart ===== */
+  .trend-svg { width: 100%; height: auto; display: block; clip-path: inset(0 100% 0 0); }
+  .trend-svg.draw { animation: trendDraw 1.1s cubic-bezier(.3,.7,.3,1) forwards; }
+  @keyframes trendDraw { to { clip-path: inset(0 0 0 0); } }
+  .trend-grid { stroke: rgba(255,255,255,0.06); stroke-width: 1; }
+  .trend-tick { fill: var(--d-muted); font-family: var(--mono); font-size: 9px; }
+  .trend-anchor { stroke: rgba(255,255,255,0.28); stroke-width: 1; stroke-dasharray: 3 3; }
+  .trend-line { fill: none; stroke-width: 2; opacity: 1; stroke-linejoin: round; stroke-linecap: round; }
+  .trend-line.blend { stroke: #ffffff; stroke-width: 3; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,0.35)); }
+  .trend-dot { stroke: var(--bg-dark-panel); stroke-width: 1.5; }
+  .trend-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 20px; margin-top: 16px; }
+  .tl-row { display: grid; grid-template-columns: 16px 1fr auto auto; align-items: center; gap: 9px; font-family: var(--mono); font-size: 11px; color: var(--d-soft); }
+  .tl-sw { width: 14px; height: 3px; border-radius: 2px; }
+  .tl-row.blend .tl-sw { height: 5px; background: #fff !important; }
+  .tl-row.blend .tl-name { color: #fff; font-weight: 600; }
+  .tl-name { color: var(--d-text); }
+  .tl-val { color: #fff; font-weight: 600; text-align: right; }
+  .tl-delta { text-align: right; min-width: 58px; }
+  .tl-delta.up { color: var(--d-red); }
+  .tl-delta.down { color: var(--d-green); }
+  .tl-delta.flat { color: var(--d-muted); }
+
+  /* ===== directional (amber) read ===== */
+  .dir-item { display: grid; grid-template-columns: 128px 1fr 172px; gap: 14px; align-items: center; padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .dir-item:last-child { border-bottom: none; }
+  .dir-co { display: flex; flex-direction: column; gap: 3px; }
+  .dir-co .nm { font-family: var(--serif); font-style: normal; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 7px; }
+  .dir-co .rt { font-family: var(--mono); font-size: 10px; color: var(--d-muted); }
+  .dir-drv { font-size: 12px; color: var(--d-soft); line-height: 1.5; }
+  .dir-drv code { font-family: var(--mono); font-size: 11px; color: var(--d-text); }
+  .dir-drv .pp { color: var(--d-red); font-weight: 600; font-family: var(--mono); }
+  .dir-cav { font-family: var(--mono); font-size: 10px; color: var(--d-amber); text-align: right; line-height: 1.45; }
+  .dir-cav.red { color: var(--d-red); }
+
+  /* ===== setup stage ===== */
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .setup-item { border: 1px solid var(--line-dark); border-radius: 10px; padding: 13px 16px; background: var(--bg-dark-panel); }
+  .setup-k { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--d-muted); margin-bottom: 5px; }
+  .setup-v { font-family: var(--serif); font-style: normal; font-size: 18px; color: #fff; }
+  .setup-v small { font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--d-soft); }
+
+  /* ============ FOOTER / STEPPER ============ */
+  footer {
+    border-top: 1px solid var(--line); padding: 13px 32px; background: var(--bg);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  }
+  .step-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); min-width: 150px; }
+  .stepper { display: flex; gap: 5px; align-items: center; flex: 1; max-width: 620px; }
+  .step-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); cursor: pointer; transition: all 0.3s; }
+  .step-dot.active { background: var(--saffron); transform: scale(1.4); }
+  .step-dot.completed { background: var(--ink); }
+  .step-connector { flex: 1; height: 1px; background: var(--line); }
+  .step-connector.done { background: var(--ink); }
+  .nav-buttons { display: flex; gap: 10px; }
+  .nav-btn {
+    font-family: var(--label); font-size: 11px; padding: 10px 20px; border-radius: 999px;
+    border: 1px solid var(--ink); background: transparent; color: var(--ink); text-transform: uppercase;
+    cursor: pointer; letter-spacing: 0.06em; transition: all 0.2s; font-weight: 600;
+  }
+  .nav-btn.primary { background: var(--saffron); color: var(--ink); border-color: var(--saffron); }
+  .nav-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(20,20,20,0.18); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ===== intro overlay ===== */
+  .intro-overlay {
+    position: absolute; inset: 0; background: var(--bg); z-index: 20;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 40px; text-align: center; transition: opacity 0.6s;
+  }
+  .intro-overlay.hidden { opacity: 0; pointer-events: none; }
+  .intro-kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 20px; }
+  .intro-title {
+    font-family: var(--display); font-size: 50px; font-weight: 700; font-style: normal;
+    letter-spacing: -0.02em; line-height: 1.08; max-width: 820px; margin-bottom: 20px;
+  }
+  .intro-title strong { font-style: normal; font-weight: 700; color: var(--ink); background: linear-gradient(transparent 62%, var(--saffron) 62%); padding: 0 2px; }
+  .intro-sub { font-size: 15px; color: var(--ink-soft); max-width: 580px; margin-bottom: 34px; line-height: 1.6; }
+  .intro-diagram { display: flex; align-items: center; gap: 18px; margin-bottom: 38px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .intro-bubble { padding: 16px 24px; border: 1px solid var(--ink); border-radius: 10px; }
+  .intro-bubble.two { background: var(--ink); color: var(--bg); }
+  .intro-arrow { font-family: var(--serif); font-style: normal; font-size: 13px; color: var(--ink-soft); text-transform: none; letter-spacing: 0; }
+
+  @media (max-width: 980px) {
+    main { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    main::before { left: 0; right: 0; top: 50%; bottom: auto; width: auto; height: 1px; }
+    .intro-title { font-size: 34px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="title">
+      <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 664.31 91.49" role="img" aria-label="Factor"><path d="M14.19,30.71H45.11V44.79H14.19V75.18H0V1.06H45.11V15.14H14.19Z"/><path d="M107.37,60.25l-5.3,14.93H87.25L113.72,1.06h13.55l26.47,74.12H138.92l-5.29-14.93ZM120.5,22.77l-8.26,24h16.52Z"/><path d="M256.56,50.4c-.53,15.57-10.7,25.84-28,25.84-17.79,0-27.95-10.91-27.95-27.43V27.42C200.65,10.91,210.81,0,228.6,0c17.26,0,27.43,10.27,28,25.84h-14.3c-.74-7.63-6.46-11.76-13.66-11.76-7.73,0-13.76,4.77-13.76,13.34V48.81c0,8.58,6,13.35,13.76,13.35,7.2,0,12.92-4.13,13.66-11.76Z"/><path d="M337.45,15.14v60H322.84v-60H302.19V1.06H358.1V15.14Z"/><path d="M460,48.81c0,16.52-10.17,27.43-28,27.43s-27.95-10.91-27.95-27.43V27.42C404.05,10.91,414.22,0,432,0s28,10.91,28,27.42ZM445.77,27.42c0-8.57-6-13.34-13.77-13.34s-13.76,4.77-13.76,13.34V48.81c0,8.58,6,13.35,13.76,13.35s13.77-4.77,13.77-13.35Z"/><path d="M528,44.68v30.5H513.85V1.06h31.24c15.25,0,23.4,8.26,23.4,21.81,0,11-5.51,18.64-16,21.07l18.42,31.24h-16.3l-17.9-30.5Zm17.37-29.54H528V30.92h17.37c5.4,0,8.89-2.75,8.89-7.84S550.81,15.14,545.41,15.14Z"/><path d="M664.31,78.78V91.49H615.6V78.78Z"/></svg>
+      <h1>Retention Intelligence</h1>
+      <span class="subtitle">Cancellation attribution · United States (FJ) · 2026-W21</span>
+    </div>
+    <div class="phase-indicator">
+      <div class="phase-chip lv1" id="chip-1"><span class="phase-num">L1</span><span>Overview</span></div>
+      <div class="phase-chip lv2" id="chip-2"><span class="phase-num">L2</span><span>Drivers</span></div>
+      <div class="phase-chip lv3" id="chip-3"><span class="phase-num">L3</span><span>Root cause</span></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ LEFT: CHAT ============ -->
+    <section class="panel-chat" id="panel-chat">
+      <div class="panel-label">The conversation · what the exec asks</div>
+      <div id="chat-stream"></div>
+    </section>
+
+    <!-- ============ RIGHT: DASHBOARD ============ -->
+    <section class="panel-behind" id="panel-behind">
+      <div class="panel-label">The evidence · full model output</div>
+      <div id="behind-stream">
+
+        <!-- STAGE 0 · SETUP -->
+        <div class="stage" data-stage="0">
+          <div class="kicker"><span class="level-tag l1">L1</span> Session context</div>
+          <h2 class="stage-title">The retention copilot, listening.</h2>
+          <p class="stage-desc">Every week the model decomposes the US cancel rate into a baseline plus the drivers that pushed it up or pulled it down — per tenure cohort. The conversation on the left is a real walk from headline to root cause.</p>
+          <div class="setup-grid">
+            <div class="setup-item"><div class="setup-k">Market</div><div class="setup-v">United States <small>· code FJ</small></div></div>
+            <div class="setup-item"><div class="setup-k">Reporting week</div><div class="setup-v">W21 <small>· 2026</small></div></div>
+            <div class="setup-item"><div class="setup-k">Method</div><div class="setup-v">Attribution <small>· baseline + driver decomposition</small></div></div>
+            <div class="setup-item"><div class="setup-k">Cohorts modelled</div><div class="setup-v">6 <small>· Trial → Long-Term</small></div></div>
+          </div>
+          <div class="note-box" style="margin-top:14px;">
+            <div class="note-title">The one word to know · baseline</div>
+            <div class="note-body"><strong>Baseline</strong> is the cancel rate we'd expect this group in a normal week — its built-in tendency to leave, before anything specific this week pushes it around. Everything <em>above</em> the baseline is what the drivers add — and that added part is what we attribute and can actually act on.</div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">How to read this dashboard</div>
+            <div class="note-body"><strong style="color:var(--d-red);">Red</strong> contributions push the cancel rate <strong>up</strong>; <strong style="color:var(--d-green);">green</strong> pulls it <strong>down</strong>. Separately, each cohort carries a model-confidence mark — <span class="qdot g"></span> decision-grade, <span class="qdot a"></span> directional, <span class="qdot r"></span> not yet mature. The bolder the dot, the more we trust the model — it's a confidence signal, <em>not</em> whether the number itself is good or bad.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 1 · L1 HEADLINE -->
+        <div class="stage" data-stage="1">
+          <div class="kicker"><span class="level-tag l1">L1</span> Cancel rate by cohort · W21 snapshot</div>
+          <h2 class="stage-title">Front-loaded by tenure.</h2>
+          <p class="stage-desc">The W21 cancel rate is steeply tenure-graded: the book's risk lives in the first weeks of a customer's life. Each cohort's gap to its own baseline is what the driver views below decompose.</p>
+
+          <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+            <span class="badge neutral">Snapshot week · 2026-W21 (2026-05-18)</span>
+          </div>
+
+          <div class="tenure-grid" id="tenure-cards"></div>
+
+          <div class="card">
+            <div class="card-head"><span>Cancel rate by cohort · lifecycle order</span><span class="right">observed · W21</span></div>
+            <div class="grad-bars" id="grad-bars"></div>
+            <div class="wf-legend" style="margin-top:14px;">
+              <span><span class="sw" style="background:linear-gradient(90deg,#C9343A,#FF585D)"></span> model-grade cohort</span>
+              <span><span class="sw" style="background:repeating-linear-gradient(45deg,rgba(255,88,93,.5),rgba(255,88,93,.5) 4px,rgba(255,88,93,.2) 4px,rgba(255,88,93,.2) 8px)"></span> not yet mature</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 9 · WEEKLY TREND (Overview) -->
+        <div class="stage" data-stage="9">
+          <div class="kicker"><span class="level-tag l1">L1</span> Overview · weekly cancellation trend</div>
+          <h2 class="stage-title">Direction, not just level.</h2>
+          <p class="stage-desc">Weekly cancel rate by cohort, last 26 weeks — verbatim from the historical series. The bold white line is the US blend (active-customer-weighted). The right-most point is W21 (2026-05-18) — the week we break down next.</p>
+          <div class="note-box warn">
+            <div class="note-title">What the trend adds</div>
+            <div class="note-body">The blend dipped to <strong>~4.2%</strong> over New Year, lifted to a one-week <strong>~8.5%</strong> in early March, and has settled around <strong>~6.8%</strong>. Over the quarter every cohort drifted modestly <strong>up</strong> — <strong>New most (+1.3pp)</strong>, then <strong>Medium</strong> and <strong>Established (+0.8pp each)</strong>; Trial, Mature and Long-Term barely moved (+0.2–0.3pp). No cohort is on fire — the drift is broad and gentle.</div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">On reliability</div>
+            <div class="note-body">These are <strong>raw weekly cancel rates</strong> — solid for all six cohorts (every recent week is above the 100-customer threshold). The <span class="qdot a"></span>/<span class="qdot r"></span> flags elsewhere apply to the <strong>attribution model's decomposition</strong>, not to this rate history.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Cancel rate · last 26 weeks</span><span class="right">→ 2026-05-18 · W21</span></div>
+            <div id="trend-chart"></div>
+            <div class="trend-legend" id="trend-legend"></div>
+            <div style="font-family:var(--mono); font-size:9px; color:var(--d-muted); margin-top:12px; letter-spacing:0.04em;">Δ = change vs start of quarter (13 weeks) · ▲ rising (worse) · ▼ falling (better)</div>
+          </div>
+        </div>
+
+        <!-- STAGE 11 · BASELINE vs OBSERVED (market level) -->
+        <div class="stage" data-stage="11">
+          <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · US blend</div>
+          <h2 class="stage-title">Tracking what the model expects.</h2>
+          <p class="stage-desc">The <strong>baseline</strong> is what the model expects the US to cancel at in a normal week — its reference level. Blended across all six cohorts (active-customer-weighted), observed and baseline hug each other: the market is broadly running <em>to plan</em>, not hot.</p>
+          <div class="note-box ok">
+            <div class="note-title">What the gap says</div>
+            <div class="note-body">At W21, observed is <strong>6.8%</strong> against a baseline of <strong>6.5%</strong> — just <strong style="color:var(--d-soft)">+0.3pp</strong>. Observed ran <em>below</em> baseline through the winter, then crossed above in spring. And the tenured cohorts (Medium, Established, Mature) currently sit <strong>below</strong> their own baselines — the book is healthy. The addressable churn isn't spread across the market; it's concentrated up front, in <strong>Trial and New</strong>.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Observed vs model baseline · US blend · 26 weeks</span><span class="right">→ 2026-05-18 · W21</span></div>
+            <div id="baseline-chart"></div>
+            <div id="baseline-legend"></div>
+          </div>
+        </div>
+
+        <!-- STAGE 2 · RELIABILITY -->
+        <div class="stage" data-stage="2">
+          <div class="kicker"><span class="level-tag l1">L1</span> Reliability check · before we act</div>
+          <h2 class="stage-title">Show everything. Trust selectively.</h2>
+          <p class="stage-desc">The US has a long history, so the model is broadly mature — every cohort clears at least directional confidence and none is red this week. We surface all six and are explicit about which carry decision-grade confidence and which we read directionally.</p>
+          <div class="card">
+            <div class="card-head"><span>Model confidence by cohort</span><span class="right">R² in-sample · W21</span></div>
+            <div class="rel-row head"><div>Cohort</div><div>Observed</div><div>Baseline</div><div>Model fit (R²)</div><div>Verdict</div></div>
+            <div id="rel-rows"></div>
+          </div>
+          <div class="note-box">
+            <div class="note-title">Closing the loop · observed → baseline → verdict</div>
+            <div class="note-body">Read each row as <strong>Observed = Baseline + this week's drivers</strong>. Where the baseline is plausible and the fit holds, the decomposition is trustworthy <em>and</em> actionable → <strong style="color:var(--d-green)">act</strong> (<strong>Trial</strong> R² 0.67, <strong>New</strong> 0.59). <strong>Medium &amp; Established</strong> are 🟡 — lower-confidence, so <strong style="color:var(--d-amber)">directional</strong>. <strong>Mature</strong> is the special case: its model is 🟢 (R² 0.43), but its baseline already sits <em>above</em> observed (the ⚠) and its one driver is non-actionable — <strong style="color:var(--d-soft)">reliable, but no lever to pull</strong>. <strong>Long-Term</strong> we <strong style="color:var(--d-amber)">park</strong>: lowest fit (R² 0.26), only marketing + residual to work with.</div>
+          </div>
+          <div class="note-box">
+            <div class="note-title">What the verdict means</div>
+            <div class="note-body"><strong style="color:var(--d-green)">Act on it</strong> — decision-grade fit <em>and</em> a lever to pull. &nbsp;<strong style="color:var(--d-amber)">Directional</strong> — lower fit; read the direction and investigate, but don't prescribe. &nbsp;<strong style="color:var(--d-soft)">Reliable · no lever</strong> — the model is decision-grade, but its baseline already covers the observed rate and its drivers are non-actionable, so there's nothing to act on. &nbsp;<strong style="color:var(--d-red)">Park</strong> — too sparsely modelled to decompose; surfaced for transparency.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 3 · L2 DRIVERS (NEW) -->
+        <div class="stage" data-stage="3">
+          <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · Trial cohort <span class="qdot g" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">Baseline does most of it. Acquisition does the rest.</h2>
+          <p class="stage-desc">Decomposing the Trial cohort's 19.5% observed cancel rate — our worst, but our most trusted model (R² 0.67). The baseline is the built-in tendency of these brand-new customers to leave; the floating bars are this week's drivers on top of it.</p>
+          <div class="card">
+            <div class="card-head"><span>Trial · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
+            <div class="wf-wrap"><div id="wf-trial"></div></div>
+            <div class="wf-legend">
+              <span><span class="sw base"></span> baseline / observed</span>
+              <span><span class="sw pos"></span> increases CR</span>
+              <span><span class="sw neg"></span> reduces CR</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Driver groups · ranked by impact on CR</span></div>
+            <div class="rank-list" id="rank-trial"></div>
+          </div>
+        </div>
+
+        <!-- STAGE 4 · L2 CHANNEL MIX -->
+        <div class="stage" data-stage="4">
+          <div class="kicker"><span class="level-tag l2">L2</span> Segmentation scan · acquisition mix</div>
+          <h2 class="stage-title">It's a quality-of-acquisition signal.</h2>
+          <p class="stage-desc">Trial's marketing group breaks into several channel terms. Four contribute this week — and one, <strong>direct sales</strong>, carries three-quarters of the group. Every figure below is the model's W21 output.</p>
+          <div class="card">
+            <div class="card-head"><span>Channels flagged by the model · Trial cohort</span><span class="right">contribution to CR</span></div>
+            <div class="rank-list" id="rank-chan-trial"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">W21</span></div>
+            <div class="decomp-row head"><div>Channel term</div><div>Contribution</div><div>% of CR</div><div>% of group</div></div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_direct_sales</code> <span class="lagtag">lag 4</span></div>
+              <div class="decomp-val pos">+1.72pp</div><div class="decomp-val pos">+9.0%</div><div class="rel-r2" style="text-align:right">75.0%</div>
+            </div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_organic_social</code> <span class="lagtag">lag 4</span></div>
+              <div class="decomp-val pos">+0.45pp</div><div class="decomp-val pos">+2.3%</div><div class="rel-r2" style="text-align:right">19.5%</div>
+            </div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_sms</code> <span class="lagtag">lag 2</span></div>
+              <div class="decomp-val pos">+0.32pp</div><div class="decomp-val pos">+1.7%</div><div class="rel-r2" style="text-align:right">14.1%</div>
+            </div>
+            <div class="decomp-row">
+              <div class="decomp-name"><code>channel_podcast</code> <span class="lagtag">lag 1</span></div>
+              <div class="decomp-val neg">−0.19pp</div><div class="decomp-val neg">−1.0%</div><div class="rel-r2" style="text-align:right">−8.2%</div>
+            </div>
+            <div class="decomp-row" style="opacity:0.5">
+              <div class="decomp-name"><code>tv_digital · pr · call_center</code> <span class="lagtag">lag 4</span></div>
+              <div class="decomp-val">0.00pp</div><div class="decomp-val">0.0%</div><div class="rel-r2" style="text-align:right">input = 0</div>
+            </div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">Read</div>
+            <div class="note-body">Within the marketing group, <strong>direct sales carries 75%</strong> of the effect (+1.72pp) — the single largest add-on to Trial's baseline; organic social (+0.45pp) and SMS (+0.32pp) are minor, and podcast is mildly protective. The signal is <strong>which channels bring customers in</strong>: direct-sales intake surfaces as cancellations four weeks later (lag 4).</div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">So what</div>
+            <div class="note-body">Because the effect acts at a <strong>4-week lag</strong>, it's a <strong>leading indicator</strong>: the at-risk intake is visible weeks before it converts to cancellations. The lever is acquisition <strong>quality</strong> on the direct-sales channel — who it brings in — not how much is spent.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 5 · L3 NEW SUB-DRIVERS -->
+        <div class="stage" data-stage="5">
+          <div class="kicker"><span class="level-tag l3">L3</span> Sub-driver decomposition · Trial <span class="qdot g" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">All the way down.</h2>
+          <p class="stage-desc">Every sub-driver the model used for the Trial cohort this week, with its signed contribution and the lag at which it acts. The lever you can actually pull is the direct-sales channel.</p>
+          <div class="card">
+            <div class="card-head"><span>Trial · sub-drivers</span><span class="right">contribution · lag · type</span></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div id="decomp-trial"></div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">What the lags tell you</div>
+            <div class="note-body">Today's Trial cancellations trace back to intake from <strong>3–4 weeks ago</strong>. The two box-size terms (<code style="font-family:var(--mono)">23×1</code> +0.59pp, <code style="font-family:var(--mono)">32×1</code> −0.57pp) nearly cancel out — they're <strong>product/preference signals</strong>, customer characteristics rather than levers. The one <strong>actionable</strong> lever is <code style="font-family:var(--mono);color:var(--d-red)">direct_sales</code> at +1.72pp (lag 4).</div>
+          </div>
+        </div>
+
+        <!-- STAGE 6 · L2/L3 NEW COHORT · the second lever -->
+        <div class="stage" data-stage="6">
+          <div class="kicker"><span class="level-tag l2">L2</span> Second lever · New cohort <span class="qdot g" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">New: same shape, a softer signal.</h2>
+          <p class="stage-desc">New is our second decision-grade cohort (R² 0.59) at 13.8%. Same story as Trial — baseline carries most of it, marketing adds the rest — but the marketing push is smaller and spread across several channels rather than concentrated in one.</p>
+          <div class="card">
+            <div class="card-head"><span>New · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
+            <div class="wf-wrap"><div id="wf-new"></div></div>
+            <div class="wf-legend">
+              <span><span class="sw base"></span> baseline / observed</span>
+              <span><span class="sw pos"></span> increases CR</span>
+              <span><span class="sw neg"></span> reduces CR</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Channels flagged by the model · New cohort</span><span class="right">contribution to CR</span></div>
+            <div class="rank-list" id="rank-chan-new"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>New · sub-drivers</span><span class="right">contribution · lag · type</span></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div id="decomp-new"></div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">Read</div>
+            <div class="note-body">New's marketing push (+1.0pp) is split across <strong>call center</strong> (+0.39pp), <strong>organic social</strong> (+0.36pp) and <strong>online freebies</strong> (+0.24pp) — no single dominant lever like Trial's direct sales. Product is mildly protective. So the New lever is <strong>broad acquisition quality</strong> across these channels, again surfacing as a 1–4 week leading indicator.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 7 · L3 LONG-TERM RED -->
+        <div class="stage" data-stage="7">
+          <div class="kicker"><span class="level-tag l3">L3</span> Transparency · the parked model <span class="qdot a" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">The cohort we can't decompose — and why.</h2>
+          <p class="stage-desc">We don't hide weak models, we show their limits. Long-Term is nearly half the US book, yet the model has almost nothing to work with here: a single marketing term and a large residual — no product, logistics or payment signal.</p>
+          <div class="card">
+            <div class="card-head"><span>Long-Term · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
+            <div class="wf-wrap"><div id="wf-lt"></div></div>
+            <div class="wf-legend">
+              <span><span class="sw base"></span> baseline / observed</span>
+              <span><span class="sw pos"></span> increases CR</span>
+              <span><span class="sw neg"></span> reduces CR</span>
+            </div>
+          </div>
+          <div class="note-box warn">
+            <div class="note-title">Why it's parked</div>
+            <div class="note-body">Long-Term's fit is the lowest of any cohort — <strong>R² 0.26</strong>. The decomposition has just one active group (marketing, <strong>+0.1pp</strong>, a single search-channel term) plus a <strong>residual worth 5.1% of CR</strong> — there's no product, logistics or payment structure to attribute. The baseline (4.0%) is actually plausible — just below observed (4.3%) — but with this little structure there's nothing to pull. <strong>Verdict: park it</strong> — monitor the rate, don't prescribe levers.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 10 · DIRECTIONAL READ (amber cohorts) -->
+        <div class="stage" data-stage="10">
+          <div class="kicker"><span class="level-tag l2">L2</span> Directional read · watch-list cohorts <span class="qdot a" style="margin-left:4px;"></span></div>
+          <h2 class="stage-title">Read it — don't bet on it.</h2>
+          <p class="stage-desc">Medium and Established are lower-confidence; Mature's model is sound but offers no lever. Right now all three run <strong>cool</strong> — at or below their baselines — on drivers that are mostly protective or non-actionable. So this is monitor, not act.</p>
+          <div class="card">
+            <div class="card-head"><span>Top driver · directional cohorts</span><span class="right">% of CR · W21</span></div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot a"></span>Medium</div><div class="rt">9.6% · ▲ +0.8pp/qtr</div></div>
+              <div class="dir-drv">Drivers run <strong>protective</strong> — <code>error_boxes_shipped</code> <span class="pp neg">−5.4%</span> &amp; <code>box_19×1</code> <span class="pp neg">−4.6%</span> pull it below baseline; a <code>freebies_offline</code> term carries a sign-warning.</div>
+              <div class="dir-cav">⚠ residual ~7%<br>runs below baseline</div>
+            </div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot a"></span>Established</div><div class="rt">6.3% · ▲ +0.8pp/qtr</div></div>
+              <div class="dir-drv">Net-protective — marketing <span class="pp neg">−4.2%</span> (<code>podcast</code> −2.4%) &amp; product <span class="pp neg">−3.4%</span>; another sign-warned <code>freebies_offline</code> term.</div>
+              <div class="dir-cav">⚠ lowest fit<br>R² 0.35 · below baseline</div>
+            </div>
+            <div class="dir-item">
+              <div class="dir-co"><div class="nm"><span class="qdot g"></span>Mature</div><div class="rt">4.3% · ▲ +0.2pp/qtr</div></div>
+              <div class="dir-drv"><code>error_boxes_shipped</code> <span class="pp">+10.3%</span> is the lone upward push, offset by a protective <code>no_transaction</code> payment term <span class="pp neg">−8.6%</span> — both non-actionable.</div>
+              <div class="dir-cav">🟢 reliable — but<br>no lever to pull</div>
+            </div>
+          </div>
+          <div class="note-box warn">
+            <div class="note-title">How to use this</div>
+            <div class="note-body">These cohorts run <strong>cool</strong> — at or below their baselines — and their drivers are mostly <strong>protective or non-actionable</strong> (logistics, box-mix, payment state), with a large residual on Medium. Treat as <strong>monitor</strong>, not act. They earn the look because they drifted up gently this quarter (<strong>Medium &amp; Established +0.8pp</strong>), but there's no lever to pull here yet.</div>
+          </div>
+        </div>
+
+        <!-- STAGE 8 · SYNTHESIS -->
+        <div class="stage" data-stage="8">
+          <div class="kicker"><span class="level-tag sum">Σ</span> Synthesis · the board one-pager</div>
+          <h2 class="stage-title">The US book, in five lines.</h2>
+          <p class="stage-desc">The whole conversation, compressed to what a board needs to decide on.</p>
+          <div class="exec-card">
+            <div class="exec-num"><div class="exec-n">1</div><div class="exec-t"><strong>Cancellations are front-loaded by tenure.</strong> Trial (<span class="up">19.5%</span>) and New (<span class="up">13.8%</span>) carry the book; tenured customers settle at 4–6%. The risk lives in the first weeks of a customer's life — not a one-off spike.<button class="exec-jump" onclick="goToStep(3)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">2</div><div class="exec-t"><strong>The market is tracking expectation.</strong> Blended <span class="down">6.8%</span> vs a 6.5% baseline (+0.3pp), and the tenured book runs <em>below</em> baseline — this isn't a market-wide churn problem, it's concentrated up front.<button class="exec-jump" onclick="goToStep(2)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">3</div><div class="exec-t"><strong>One clean lever: Trial acquisition quality.</strong> <span class="up">Direct sales (+1.72pp)</span> — 75% of Trial's marketing effect, at a 4-week lag — is importing early churn. A leading indicator we can steer.<button class="exec-jump" onclick="goToStep(6)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>New is the second lever</strong> — the same acquisition-quality signal, softer and spread across call-center, organic-social and online-freebies channels.<button class="exec-jump" onclick="goToStep(8)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Act on Trial &amp; New, monitor the tenured cohorts, park Long-Term.</strong> Trial &amp; New are decision-grade; the tenured book runs cool with non-actionable drivers; Long-Term (R² 0.26) is too sparse to decompose.<button class="exec-jump" onclick="goToStep(4)">see it →</button></div></div>
+          </div>
+          <div class="note-box warn" style="margin-bottom:14px;">
+            <div class="note-title">Direction</div>
+            <div class="note-body">Attribution is the <strong>W21</strong> decomposition; the <strong>26-week history</strong> shows a market that dipped to ~4.2% at New Year, touched ~8.5% in early March, and settled at ~6.8% — every cohort drifted modestly up this quarter (<strong>New +1.3pp</strong> the most). Level and direction come from the same source — the early-lifecycle pattern is the consistent story.</div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span>Confidence ledger</span><span class="right">what we'll act on</span></div>
+            <div class="rel-strip">
+              <span class="rel-chip"><span class="qdot g"></span> Trial · act</span>
+              <span class="rel-chip"><span class="qdot g"></span> New · act</span>
+              <span class="rel-chip"><span class="qdot a"></span> Medium · watch</span>
+              <span class="rel-chip"><span class="qdot a"></span> Established · watch</span>
+              <span class="rel-chip"><span class="qdot g"></span> Mature · no lever</span>
+              <span class="rel-chip"><span class="qdot a"></span> Long-Term · park</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER / STEPPER ============ -->
+  <footer>
+    <div class="step-label" id="step-label">Before we start</div>
+    <div class="stepper" id="stepper"></div>
+    <div class="nav-buttons">
+      <button class="nav-btn" id="btn-prev">← Back</button>
+      <button class="nav-btn primary" id="btn-next">Next →</button>
+    </div>
+  </footer>
+
+  <!-- ============ INTRO OVERLAY ============ -->
+  <div class="intro-overlay" id="intro">
+    <div class="intro-kicker">Factor · Data Science × Retention</div>
+    <h1 class="intro-title">Why are customers cancelling in the <strong>US</strong>? Let's ask — and watch the model answer.</h1>
+    <p class="intro-sub">One conversation, two views. On the left, an executive walks from the headline down to the root cause. On the right, the full attribution model exposes every number behind each answer. Move with the arrow keys or the buttons below.</p>
+    <div class="intro-diagram">
+      <div class="intro-bubble one">L1 · Overview</div>
+      <span class="intro-arrow">— headline to root cause —</span>
+      <div class="intro-bubble two">L3 · Root cause</div>
+    </div>
+    <button class="nav-btn primary" id="btn-start" style="padding:14px 32px; font-size:13px;">Start the walkthrough →</button>
+  </div>
+
+</div>
+
+<script>
+  // ====================================================
+  // DATA · United States (FJ) · W21 · Model A  (from source JSON)
+  // contributions expressed in percentage points (pp) of cancel rate
+  // Reporting week 2026-W21 = 2026-05-18. No ar_lag (momentum) or seasonality group in this market.
+  // ====================================================
+  const TENURES = [
+    { key:'Trial',       rate:19.5, base:16.6, r2:0.67, q:'g', verdict:'act',   life:0, weeks:'0–2w'   },
+    { key:'New',         rate:13.8, base:12.9, r2:0.59, q:'g', verdict:'act',   life:1, weeks:'3–5w'   },
+    { key:'Medium',      rate:9.6,  base:9.7,  r2:0.49, q:'a', verdict:'watch', life:2, weeks:'6–10w'  },
+    { key:'Established',  rate:6.3,  base:6.8,  r2:0.35, q:'a', verdict:'watch', life:3, weeks:'11–25w' },
+    { key:'Mature',       rate:4.3,  base:4.6,  r2:0.43, q:'g', verdict:'hold',  life:4, weeks:'26–52w' },
+    { key:'Long-Term',    rate:4.3,  base:4.0,  r2:0.26, q:'a', verdict:'park',  life:5, weeks:'≥53w'   }
+  ];
+
+  // ====================================================
+  // WEEKLY HISTORY · United States (FJ) · last 26 weeks to 2026-05-18 (= W21)
+  // VERBATIM from US Historical data/[HF_Retention_FJ]_json_historical_cr.json
+  // each row: [week, cancel_rate (0-1), active_customers]
+  // ====================================================
+  const US_HIST = {"Trial":[["2025-11-24",0.183,24859],["2025-12-01",0.162,18742],["2025-12-08",0.187,15729],["2025-12-15",0.178,15684],["2025-12-22",0.182,18169],["2025-12-29",0.153,15807],["2026-01-05",0.162,17420],["2026-01-12",0.163,36622],["2026-01-19",0.169,61429],["2026-01-26",0.175,65243],["2026-02-02",0.176,55777],["2026-02-09",0.188,45917],["2026-02-16",0.193,43455],["2026-02-23",0.194,40704],["2026-03-02",0.195,37739],["2026-03-09",0.2,39070],["2026-03-16",0.21,38384],["2026-03-23",0.194,36661],["2026-03-30",0.195,35354],["2026-04-06",0.203,33206],["2026-04-13",0.194,31340],["2026-04-20",0.199,32041],["2026-04-27",0.197,32972],["2026-05-04",0.198,33315],["2026-05-11",0.2,32800],["2026-05-18",0.195,31164]],"New":[["2025-11-24",0.131,38454],["2025-12-01",0.126,37059],["2025-12-08",0.14,32280],["2025-12-15",0.128,27568],["2025-12-22",0.121,22024],["2025-12-29",0.108,21465],["2026-01-05",0.13,20843],["2026-01-12",0.13,21903],["2026-01-19",0.127,24019],["2026-01-26",0.121,40674],["2026-02-02",0.12,61553],["2026-02-09",0.12,75079],["2026-02-16",0.125,70773],["2026-02-23",0.129,59438],["2026-03-02",0.138,52414],["2026-03-09",0.137,47566],["2026-03-16",0.146,45421],["2026-03-23",0.132,44415],["2026-03-30",0.139,44424],["2026-04-06",0.144,43064],["2026-04-13",0.138,41389],["2026-04-20",0.14,39237],["2026-04-27",0.145,37318],["2026-05-04",0.126,37777],["2026-05-11",0.154,37319],["2026-05-18",0.138,38082]],"Medium":[["2025-11-24",0.091,54372],["2025-12-01",0.091,50662],["2025-12-08",0.1,47158],["2025-12-15",0.09,44267],["2025-12-22",0.086,42365],["2025-12-29",0.068,39986],["2026-01-05",0.089,36006],["2026-01-12",0.093,30875],["2026-01-19",0.085,28495],["2026-01-26",0.088,25603],["2026-02-02",0.087,24429],["2026-02-09",0.09,26109],["2026-02-16",0.088,39028],["2026-02-23",0.089,54182],["2026-03-02",0.096,65165],["2026-03-09",0.091,71197],["2026-03-16",0.095,72871],["2026-03-23",0.086,68530],["2026-03-30",0.091,59400],["2026-04-06",0.096,52969],["2026-04-13",0.096,50213],["2026-04-20",0.097,49012],["2026-04-27",0.1,46924],["2026-05-04",0.094,45859],["2026-05-11",0.112,43739],["2026-05-18",0.096,41894]],"Established":[["2025-11-24",0.062,98877],["2025-12-01",0.064,98851],["2025-12-08",0.07,97828],["2025-12-15",0.061,97136],["2025-12-22",0.056,95990],["2025-12-29",0.046,95238],["2026-01-05",0.06,93584],["2026-01-12",0.062,92010],["2026-01-19",0.058,91021],["2026-01-26",0.057,89571],["2026-02-02",0.057,86550],["2026-02-09",0.056,82140],["2026-02-16",0.055,76817],["2026-02-23",0.055,72694],["2026-03-02",0.07,67521],["2026-03-09",0.061,62956],["2026-03-16",0.066,59890],["2026-03-23",0.058,64827],["2026-03-30",0.062,72284],["2026-04-06",0.064,77572],["2026-04-13",0.064,80022],["2026-04-20",0.064,80736],["2026-04-27",0.07,81140],["2026-05-04",0.066,80981],["2026-05-11",0.07,80696],["2026-05-18",0.063,81624]],"Mature":[["2025-11-24",0.041,101578],["2025-12-01",0.044,101047],["2025-12-08",0.047,100737],["2025-12-15",0.039,100727],["2025-12-22",0.037,101223],["2025-12-29",0.03,101912],["2026-01-05",0.038,101166],["2026-01-12",0.041,97092],["2026-01-19",0.041,94340],["2026-01-26",0.042,92319],["2026-02-02",0.041,91787],["2026-02-09",0.041,91144],["2026-02-16",0.041,90999],["2026-02-23",0.042,91209],["2026-03-02",0.063,88577],["2026-03-09",0.046,88030],["2026-03-16",0.051,87158],["2026-03-23",0.042,87361],["2026-03-30",0.042,87081],["2026-04-06",0.044,85957],["2026-04-13",0.042,84483],["2026-04-20",0.045,83155],["2026-04-27",0.051,81490],["2026-05-04",0.048,79783],["2026-05-11",0.049,78049],["2026-05-18",0.043,76119]],"Long-Term":[["2025-11-24",0.037,229712],["2025-12-01",0.039,226289],["2025-12-08",0.041,221522],["2025-12-15",0.035,219468],["2025-12-22",0.034,217380],["2025-12-29",0.027,215798],["2026-01-05",0.033,213826],["2026-01-12",0.038,220255],["2026-01-19",0.039,230631],["2026-01-26",0.04,236670],["2026-02-02",0.04,242247],["2026-02-09",0.04,243464],["2026-02-16",0.04,245314],["2026-02-23",0.042,246212],["2026-03-02",0.065,240965],["2026-03-09",0.042,241067],["2026-03-16",0.048,240114],["2026-03-23",0.04,239923],["2026-03-30",0.041,239236],["2026-04-06",0.042,237804],["2026-04-13",0.04,236343],["2026-04-20",0.044,234668],["2026-04-27",0.049,231843],["2026-05-04",0.045,230195],["2026-05-11",0.047,227899],["2026-05-18",0.043,227106]]};
+  const TREND_ORDER = ['Trial','New','Medium','Established','Mature','Long-Term'];
+  const TREND_COLOR = { 'Trial':'#FF585D','New':'#FFC800','Medium':'#C79C00','Established':'#75C26D','Mature':'#61DFFF','Long-Term':'#18849F' };
+
+  // ====================================================
+  // MARKET-LEVEL MODEL BASELINE · United States (FJ) · same 26 weeks as US_HIST
+  // Active-customer-weighted blend of each cohort's model_A `baseline`, VERBATIM from the
+  // weekly model_A files (2025-W48 → 2026-W21). Observed blend is computed in-browser from
+  // US_HIST. W21 blend: observed 6.76% vs baseline 6.50% (+0.26pp). NOT synthesized.
+  // ====================================================
+  const US_BASELINE_BLEND = [0.0747,0.0621,0.0602,0.0595,0.0595,0.0536,0.0528,0.0566,0.0616,0.0636,0.0643,0.0638,0.0633,0.0608,0.0619,0.0612,0.061,0.0603,0.0602,0.0599,0.0654,0.065,0.065,0.0647,0.0652,0.065];
+
+  // Trial cohort waterfall  (16.6 +2.3 -0.1 +0.4 +0.3 = 19.5)
+  const WF_TRIAL = {
+    max: 22,
+    steps: [
+      { label:'Baseline',   val:16.6, kind:'base' },
+      { label:'Marketing',  val:2.3,  kind:'pos' },
+      { label:'Logistics',  val:-0.1, kind:'neg' },
+      { label:'Product',    val:0.4,  kind:'pos' },
+      { label:'Residual',   val:0.3,  kind:'pos' },
+      { label:'Observed',   val:19.5, kind:'result' }
+    ]
+  };
+
+  // New cohort waterfall  (12.9 +1.0 -0.2 -0.0 +0.1 = 13.8)
+  const WF_NEW = {
+    max: 16,
+    steps: [
+      { label:'Baseline',   val:12.9, kind:'base' },
+      { label:'Marketing',  val:1.0,  kind:'pos' },
+      { label:'Product',    val:-0.2, kind:'neg' },
+      { label:'Logistics',  val:-0.0, kind:'neg' },
+      { label:'Residual',   val:0.1,  kind:'pos' },
+      { label:'Observed',   val:13.8, kind:'result' }
+    ]
+  };
+
+  // Long-Term waterfall  (4.0 +0.1 +0.2 = 4.3) — only marketing + residual are modelled here
+  const WF_LT = {
+    max: 6,
+    steps: [
+      { label:'Baseline',   val:4.0,  kind:'base' },
+      { label:'Marketing',  val:0.1,  kind:'pos' },
+      { label:'Residual',   val:0.2,  kind:'pos' },
+      { label:'Observed',   val:4.3,  kind:'result' }
+    ]
+  };
+
+  // Driver groups ranked by impact on CR (pct = pct_of_CR)
+  const RANK_TRIAL = [
+    { label:'Marketing', val:2.3,  pct:'+11.9%', sign:'pos' },
+    { label:'Product',   val:0.4,  pct:'+2.2%',  sign:'pos' },
+    { label:'Logistics', val:-0.1, pct:'−0.5%',  sign:'neg' }
+  ];
+  const RANK_NEW = [
+    { label:'Marketing', val:1.0,  pct:'+7.0%',  sign:'pos' },
+    { label:'Product',   val:-0.2, pct:'−1.1%',  sign:'neg' },
+    { label:'Logistics', val:-0.0, pct:'−0.1%',  sign:'neg' }
+  ];
+
+  // Marketing-group channel sub-drivers that fired this week (pct = pct_of_CR)
+  const RANK_CHAN_TRIAL = [
+    { label:'channel · direct_sales',   val:1.72,  pct:'+9.0%', sign:'pos' },
+    { label:'channel · organic_social', val:0.45,  pct:'+2.3%', sign:'pos' },
+    { label:'channel · sms',            val:0.32,  pct:'+1.7%', sign:'pos' },
+    { label:'channel · podcast',        val:-0.19, pct:'−1.0%', sign:'neg' }
+  ];
+  const RANK_CHAN_NEW = [
+    { label:'channel · call_center',     val:0.39,  pct:'+2.8%', sign:'pos' },
+    { label:'channel · organic_social',  val:0.36,  pct:'+2.7%', sign:'pos' },
+    { label:'channel · freebies_online', val:0.24,  pct:'+1.8%', sign:'pos' },
+    { label:'channel · podcast',         val:-0.03, pct:'−0.2%', sign:'neg' }
+  ];
+
+  const DECOMP_TRIAL = [
+    { grp:'Marketing', name:'channel · direct_sales',   val:'+1.72', sign:'pos', lag:4, type:'lever',   typeLabel:'actionable lever' },
+    { grp:'Product',   name:'box · 23×1',               val:'+0.59', sign:'pos', lag:3, type:'struct',  typeLabel:'inherent' },
+    { grp:'Product',   name:'box · 32×1',               val:'−0.57', sign:'neg', lag:4, type:'struct',  typeLabel:'inherent' },
+    { grp:'Marketing', name:'channel · organic_social', val:'+0.45', sign:'pos', lag:4, type:'lever',   typeLabel:'actionable lever' },
+    { grp:'Product',   name:'pref · unknown',           val:'+0.40', sign:'pos', lag:4, type:'struct',  typeLabel:'product signal' }
+  ];
+
+  const DECOMP_NEW = [
+    { grp:'Marketing', name:'channel · call_center',     val:'+0.39', sign:'pos', lag:4, type:'lever',   typeLabel:'actionable lever' },
+    { grp:'Marketing', name:'channel · organic_social',  val:'+0.36', sign:'pos', lag:4, type:'lever',   typeLabel:'actionable lever' },
+    { grp:'Marketing', name:'channel · freebies_online', val:'+0.24', sign:'pos', lag:1, type:'lever',   typeLabel:'actionable lever' },
+    { grp:'Product',   name:'box · 19×1',                val:'−0.16', sign:'neg', lag:1, type:'struct',  typeLabel:'inherent' },
+    { grp:'Marketing', name:'channel · podcast',         val:'−0.03', sign:'neg', lag:1, type:'protect', typeLabel:'negligible' }
+  ];
+
+  // ====================================================
+  // RENDERERS
+  // ====================================================
+  function renderTenureCards() {
+    const el = document.getElementById('tenure-cards');
+    el.innerHTML = TENURES.map(t => {
+      const delta = (t.rate - t.base);
+      const up = delta >= 0;
+      const cls = up ? 'biz-up' : 'biz-down';
+      const deltaTxt = `${up?'▲':'▼'} ${up?'+':'−'}${Math.abs(delta).toFixed(1)}pp vs baseline`;
+      return `<div class="tenure-card ${cls}">
+        <div class="tc-name"><span class="qdot ${t.q}"></span>${t.key} <span style="color:var(--d-muted); text-transform:none; letter-spacing:0;">· ${t.weeks}</span></div>
+        <div class="tc-rate">${t.rate.toFixed(1)}%</div>
+        <div class="tc-sub" style="color:${up?'var(--d-red)':'var(--d-green)'}">${deltaTxt}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderGradBars() {
+    const el = document.getElementById('grad-bars');
+    const maxRate = 25;
+    el.innerHTML = TENURES.slice().sort((a,b)=>a.life-b.life).map(t => {
+      const w = (t.rate/maxRate*100).toFixed(1);
+      const fillCls = t.q==='g' ? 'reliable' : 'muted';
+      return `<div class="grad-row">
+        <div><span class="qdot ${t.q}"></span> ${t.key}</div>
+        <div class="grad-track"><div class="grad-fill ${fillCls}" style="width:0%" data-w="${w}"></div></div>
+        <div class="grad-val">${t.rate.toFixed(1)}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderRelRows() {
+    const el = document.getElementById('rel-rows');
+    const r2max = 0.6;
+    const vTxt = { act:'Act on it', watch:'Directional', hold:'Reliable · no lever', park:'Park · not mature' };
+    const vCls = { act:'act', watch:'watch', hold:'hold', park:'park' };
+    el.innerHTML = TENURES.slice().sort((a,b)=>b.r2-a.r2).map(t => {
+      const w = (t.r2/r2max*100).toFixed(0);
+      const implausible = (t.base < 0 || t.base > t.rate);   // baseline can't be negative, nor exceed observed
+      const baseCell = implausible
+        ? `<div class="rel-r2" style="color:var(--d-amber)" title="implausible baseline">${t.base.toFixed(1)}% ⚠</div>`
+        : `<div class="rel-r2">${t.base.toFixed(1)}%</div>`;
+      return `<div class="rel-row">
+        <div class="rel-name"><span class="qdot ${t.q}"></span>${t.key} <span style="font-family:var(--mono); font-size:9px; color:var(--d-muted);">${t.weeks}</span></div>
+        <div class="rel-r2">${t.rate.toFixed(1)}%</div>
+        ${baseCell}
+        <div>
+          <span class="rel-r2">${t.r2.toFixed(2)}</span>
+          <div class="conf-track"><div class="conf-fill ${t.q}" style="width:${w}%"></div></div>
+        </div>
+        <div class="verdict ${vCls[t.verdict]}">${vTxt[t.verdict]}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderWaterfall(id, data) {
+    const H = 230, scale = H / data.max;
+    let cum = 0;
+    const cols = [];
+    const levels = []; // running level entering/leaving each col for connectors
+    data.steps.forEach(s => {
+      let lo, hi, after;
+      if (s.kind === 'base' || s.kind === 'result') {
+        lo = 0; hi = s.val; after = (s.kind==='base') ? s.val : null;
+        if (s.kind==='base') cum = s.val;
+      } else if (s.val >= 0) { // pos
+        lo = cum; hi = cum + s.val; cum = hi; after = cum;
+      } else { // neg
+        hi = cum; lo = cum + s.val; cum = lo; after = cum;
+      }
+      cols.push({ s, lo, hi });
+      levels.push(after);
+    });
+
+    const colHtml = cols.map(c => {
+      const bottom = (c.lo * scale);
+      const height = Math.max(2, (c.hi - c.lo) * scale);
+      const kindCls = c.s.kind;
+      const sign = (c.s.kind==='pos') ? '+' : (c.s.kind==='neg' ? '−' : '');
+      const valTxt = (c.s.kind==='base'||c.s.kind==='result')
+        ? c.s.val.toFixed(1) + '%'
+        : sign + Math.abs(c.s.val).toFixed(1);
+      const labelBottom = bottom + height + 4;
+      return `<div class="wf-col">
+        <div class="wf-bar ${kindCls}" style="bottom:${bottom}px; height:${height}px;"></div>
+        <div class="wf-vlabel" style="bottom:${labelBottom}px;">${valTxt}</div>
+      </div>`;
+    }).join('');
+
+    // y gridlines + ticks
+    const ticks = [];
+    const tickStep = data.max <= 16 ? 4 : 5;
+    for (let v = 0; v <= data.max; v += tickStep) {
+      const y = v * scale;
+      ticks.push(`<div class="wf-gridline" style="bottom:${y + 26}px;"></div>`);
+      ticks.push(`<div class="wf-ytick" style="bottom:${y + 26}px;">${v}%</div>`);
+    }
+
+    // connectors between consecutive non-result bars at running level
+    const conns = [];
+    const nCols = cols.length;
+    const colWpct = 100 / nCols;
+    for (let i = 0; i < nCols - 1; i++) {
+      const next = cols[i+1];
+      if (next.s.kind === 'result') continue;
+      const lvl = levels[i];
+      if (lvl == null) continue;
+      const y = lvl * scale;
+      const left = (i + 0.5) * colWpctSafe(colWpct);
+      const width = colWpct;
+      conns.push(`<div class="wf-conn" style="bottom:${y}px; left:${left}%; width:${width}%;"></div>`);
+    }
+
+    const xlabels = cols.map(c => `<div class="wf-xlabel">${c.s.label}</div>`).join('');
+
+    document.getElementById(id).innerHTML = `
+      <div class="wf-yaxis">${ticks.join('')}</div>
+      <div class="wf-plot">
+        <div class="wf-cols">${colHtml}</div>
+        ${conns.join('')}
+      </div>
+      <div class="wf-xlabels">${xlabels}</div>`;
+  }
+  function colWpctSafe(p){ return p; }
+
+  function renderRank(id, items) {
+    const max = Math.max(...items.map(i => Math.abs(i.val)));
+    document.getElementById(id).innerHTML = items.map((it, idx) => {
+      const w = (Math.abs(it.val) / max * 100).toFixed(0);
+      return `<div class="rank-item">
+        <div class="rank-num">${idx+1}</div>
+        <div class="rank-bar-track">
+          <div class="rank-bar ${it.sign}" style="width:${w}%"></div>
+          <div class="rank-label">${it.label}</div>
+        </div>
+        <div class="rank-val ${it.sign}">${it.pct}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderDecomp(id, rows) {
+    document.getElementById(id).innerHTML = rows.map(r => `
+      <div class="decomp-row">
+        <div class="decomp-name"><span class="grp">${r.grp}</span><code>${r.name}</code></div>
+        <div class="decomp-val ${r.sign}">${r.val}pp</div>
+        <div><span class="lagtag">lag ${r.lag}</span></div>
+        <div><span class="tag-pill ${r.type}">${r.typeLabel}</span></div>
+      </div>`).join('');
+  }
+
+  // ----- weekly trend (real history; blend computed from active_customers) -----
+  function computeBlend() {
+    const n = US_HIST['Trial'].length;
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      let num = 0, den = 0;
+      TREND_ORDER.forEach(k => { const d = US_HIST[k][i]; num += d[1]*d[2]; den += d[2]; });
+      out.push(den ? num/den : 0);
+    }
+    return out;
+  }
+  function deltaTag(now, prev) {
+    const pp = (now - prev) * 100;
+    const cls = Math.abs(pp) < 0.3 ? 'flat' : (pp > 0 ? 'up' : 'down');
+    const arrow = cls === 'flat' ? '→' : (pp > 0 ? '▲' : '▼');
+    const txt = (pp >= 0 ? '+' : '−') + Math.abs(pp).toFixed(1) + 'pp';
+    return { cls, html: `${arrow} ${cls === 'flat' ? '0.0pp' : txt}` };
+  }
+  function renderTrend() {
+    const weeks = US_HIST['Trial'].map(d => d[0]);
+    const n = weeks.length;
+    const blend = computeBlend();
+    let maxv = 0;
+    TREND_ORDER.forEach(k => US_HIST[k].forEach(d => { if (d[1] > maxv) maxv = d[1]; }));
+    const maxY = Math.ceil((maxv * 100) / 5) * 5;            // % axis ceiling (→30)
+    const W = 640, H = 280, L = 32, R = 14, T = 12, B = 30;
+    const pw = W - L - R, ph = H - T - B;
+    const X = i => L + (n <= 1 ? 0 : (i / (n - 1)) * pw);
+    const Y = v => T + (1 - (v * 100) / maxY) * ph;          // v in 0..1
+    const pts = arr => arr.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+
+    // gridlines + y ticks (every 5%, label every 10%)
+    let grid = '';
+    for (let t = 0; t <= maxY; t += 5) {
+      const y = Y(t / 100);
+      grid += `<line class="trend-grid" x1="${L}" y1="${y.toFixed(1)}" x2="${W - R}" y2="${y.toFixed(1)}"/>`;
+      if (t % 10 === 0) grid += `<text class="trend-tick" x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${t}%</text>`;
+    }
+    // x labels at month boundaries
+    let xlab = '';
+    const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let prevMon = '';
+    weeks.forEach((w, i) => {
+      const m = w.slice(5, 7);
+      if (m !== prevMon) {
+        prevMon = m;
+        xlab += `<text class="trend-tick" x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle">${MON[parseInt(m,10)-1]}</text>`;
+      }
+    });
+    // W21 anchor line
+    const ax = X(n - 1);
+    const anchor = `<line class="trend-anchor" x1="${ax.toFixed(1)}" y1="${T}" x2="${ax.toFixed(1)}" y2="${T + ph}"/>`
+      + `<text class="trend-tick" x="${(ax - 3).toFixed(1)}" y="${T + 9}" text-anchor="end" style="fill:#cdd5cc">W21</text>`;
+
+    // cohort lines + end dots
+    let lines = '', dots = '';
+    TREND_ORDER.forEach(k => {
+      const series = US_HIST[k].map(d => d[1]);
+      lines += `<polyline class="trend-line" stroke="${TREND_COLOR[k]}" points="${pts(series)}"/>`;
+      dots  += `<circle class="trend-dot" cx="${X(n-1).toFixed(1)}" cy="${Y(series[n-1]).toFixed(1)}" r="3" fill="${TREND_COLOR[k]}"/>`;
+    });
+    // blend line on top
+    lines += `<polyline class="trend-line blend" points="${pts(blend)}"/>`;
+    dots  += `<circle class="trend-dot" cx="${X(n-1).toFixed(1)}" cy="${Y(blend[n-1]).toFixed(1)}" r="3.5" fill="#fff"/>`;
+
+    document.getElementById('trend-chart').innerHTML =
+      `<svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`
+      + grid + anchor + lines + dots + xlab + `</svg>`;
+
+    // legend with latest value + Δ vs 4 weeks
+    const QUAL = Object.fromEntries(TENURES.map(t => [t.key, t.q]));   // confidence ring per cohort
+    const rows = TREND_ORDER.map(k => {
+      const s = US_HIST[k];
+      const now = s[n-1][1], prev = s[n-14][1];   // Δ vs start of quarter (13 weeks back)
+      const d = deltaTag(now, prev);
+      return `<div class="tl-row"><span class="tl-sw" style="background:${TREND_COLOR[k]}"></span>`
+        + `<span class="tl-name"><span class="qdot ${QUAL[k]}" style="margin-right:6px;"></span>${k}</span><span class="tl-val">${(now*100).toFixed(1)}%</span>`
+        + `<span class="tl-delta ${d.cls}">${d.html}</span></div>`;
+    }).join('');
+    const bd = deltaTag(blend[n-1], blend[n-14]);
+    const blendRow = `<div class="tl-row blend"><span class="tl-sw"></span>`
+      + `<span class="tl-name">US · blend</span><span class="tl-val">${(blend[n-1]*100).toFixed(1)}%</span>`
+      + `<span class="tl-delta ${bd.cls}">${bd.html}</span></div>`;
+    document.getElementById('trend-legend').innerHTML = blendRow + rows;
+  }
+
+  // ----- market-level baseline vs observed (real model_A baseline, active-customer-weighted) -----
+  function renderBaselineTrend() {
+    const weeks = US_HIST['Trial'].map(d => d[0]);
+    const n = weeks.length;
+    const obs = computeBlend();              // blended observed — same weights as the per-cohort trend
+    const base = US_BASELINE_BLEND;          // blended model baseline
+    let maxv = 0;
+    obs.concat(base).forEach(v => { if (v > maxv) maxv = v; });
+    const maxY = Math.ceil((maxv * 100) / 5) * 5;
+    const W = 640, H = 240, L = 32, R = 14, T = 12, B = 30;
+    const pw = W - L - R, ph = H - T - B;
+    const X = i => L + (n <= 1 ? 0 : (i / (n - 1)) * pw);
+    const Y = v => T + (1 - (v * 100) / maxY) * ph;
+    const pts = arr => arr.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
+    let grid = '';
+    for (let t = 0; t <= maxY; t += 5) {
+      const y = Y(t / 100);
+      grid += `<line class="trend-grid" x1="${L}" y1="${y.toFixed(1)}" x2="${W - R}" y2="${y.toFixed(1)}"/>`;
+      if (t % 10 === 0) grid += `<text class="trend-tick" x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${t}%</text>`;
+    }
+    let xlab = '';
+    const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let prevMon = '';
+    weeks.forEach((w, i) => {
+      const m = w.slice(5, 7);
+      if (m !== prevMon) { prevMon = m; xlab += `<text class="trend-tick" x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle">${MON[parseInt(m,10)-1]}</text>`; }
+    });
+    const ax = X(n - 1);
+    const anchor = `<line class="trend-anchor" x1="${ax.toFixed(1)}" y1="${T}" x2="${ax.toFixed(1)}" y2="${T + ph}"/>`
+      + `<text class="trend-tick" x="${(ax - 3).toFixed(1)}" y="${T + 9}" text-anchor="end" style="fill:#cdd5cc">W21</text>`;
+    // shaded gap between observed and baseline (in the US observed straddles baseline — neutral fill)
+    const gapPts = obs.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
+      + ' ' + base.map((v, i) => `${X(n-1-i).toFixed(1)},${Y(base[n-1-i]).toFixed(1)}`).join(' ');
+    const fill = `<polygon points="${gapPts}" fill="rgba(255,255,255,0.06)" stroke="none"/>`;
+    const baseLine = `<polyline points="${pts(base)}" fill="none" stroke="var(--d-soft)" stroke-width="2" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
+    const obsLine = `<polyline points="${pts(obs)}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`;
+    const dots = `<circle cx="${ax.toFixed(1)}" cy="${Y(obs[n-1]).toFixed(1)}" r="3.5" fill="#fff" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`
+      + `<circle cx="${ax.toFixed(1)}" cy="${Y(base[n-1]).toFixed(1)}" r="3" fill="var(--d-soft)" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`;
+    document.getElementById('baseline-chart').innerHTML =
+      `<svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`
+      + grid + anchor + fill + baseLine + obsLine + dots + xlab + `</svg>`;
+    const o = obs[n-1]*100, b = base[n-1]*100, g = o - b;
+    document.getElementById('baseline-legend').innerHTML =
+      `<div style="display:flex;flex-wrap:wrap;gap:9px 22px;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--d-soft)">`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;height:3px;background:#fff;border-radius:2px"></span>Observed <strong style="color:#fff;margin-left:2px">${o.toFixed(1)}%</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;border-top:2px dashed var(--d-soft)"></span>Model baseline <strong style="color:#fff;margin-left:2px">${b.toFixed(1)}%</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Gap · observed − baseline · W21 <strong style="color:var(--d-soft);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
+      + `</div>`;
+  }
+
+  // build all static visuals once
+  function buildVisuals() {
+    renderTenureCards();
+    renderGradBars();
+    renderRelRows();
+    renderWaterfall('wf-trial', WF_TRIAL);
+    renderWaterfall('wf-new', WF_NEW);
+    renderWaterfall('wf-lt', WF_LT);
+    renderRank('rank-trial', RANK_TRIAL);
+    renderRank('rank-chan-trial', RANK_CHAN_TRIAL);
+    renderRank('rank-chan-new', RANK_CHAN_NEW);
+    renderDecomp('decomp-trial', DECOMP_TRIAL);
+    renderDecomp('decomp-new', DECOMP_NEW);
+    renderTrend();
+    renderBaselineTrend();
+  }
+
+  function animateGradBars() {
+    document.querySelectorAll('#grad-bars .grad-fill').forEach(f => {
+      f.style.width = '0%';
+      requestAnimationFrame(() => requestAnimationFrame(() => { f.style.width = f.dataset.w + '%'; }));
+    });
+  }
+
+  // ====================================================
+  // CONVERSATION STEPS
+  // ====================================================
+  const steps = [
+    { label:'Session opens', level:1, stage:0, chat:[] },
+    {
+      label:'The direction', level:1, stage:9,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Morning. Quick read on the US before the board call — how are cancellations tracking this week, and is anything on fire?" },
+        { role:'bot', name:'Retention Copilot', content:"Morning. Nothing's on fire — this week the blended cancel rate is <strong>~6.8%</strong>, and it's been broadly steady since the New-Year dip. But the blend hides the story, so let me lead with the <strong>26-week direction</strong>." },
+        { role:'bot', name:'Retention Copilot', content:"At market level it's calm — the cohorts underneath are drifting, but gently. Watch the lines on the right:" },
+        { role:'bot', name:'Retention Copilot', content:"Over the last quarter <strong style='color:#9B2629'>New (+1.3pp)</strong> rose the most, with <strong>Medium</strong> and <strong>Established</strong> up about +0.8pp each; Trial, Mature and Long-Term barely moved. So it's not a spike — it's a slow, broad-based drift. <em>That's</em> the backdrop." }
+      ]
+    },
+    {
+      label:'Tracking to expectation?', level:1, stage:11,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And versus what the model expected — are we running hot, or is this just normal?" },
+        { role:'bot', name:'Retention Copilot', content:"Normal, basically. Here's the blended observed rate against the model's <strong>baseline</strong> — what it expects the US to cancel at in a normal week." },
+        { role:'bot', name:'Retention Copilot', content:"The two lines hug each other. At W21 observed is <strong>6.8%</strong> vs <strong>6.5%</strong> expected — only <strong style='color:#7A6A1F'>+0.3pp</strong>. Observed even ran <em>below</em> baseline through the winter, and the tenured cohorts are sitting below their baselines right now — the book is healthy. So the churn worth acting on isn't market-wide; it's concentrated up front, in <strong>Trial and New</strong>." }
+      ]
+    },
+    {
+      label:'This week', level:1, stage:1,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Got it. So break down this week itself — where do the cancellations actually sit?" },
+        { role:'bot', name:'Retention Copilot', content:"This is the closed week, W21. The headline: cancellations are steeply <strong>front-loaded by tenure</strong> — the full table's on the right." },
+        { role:'bot', name:'Retention Copilot', content:"<strong>Trial</strong> cancels at 19.5%, <strong>New</strong> at 13.8% — then it falls off sharply for tenured customers (Established 6.3%, Mature 4.3%). Retention risk in the US is essentially an <em>onboarding</em> problem, not a base problem." }
+      ]
+    },
+    {
+      label:'Can I trust it?', level:1, stage:2,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Before I quote any of that to the board — how much of it can I actually trust?" },
+        { role:'bot', name:'Retention Copilot', content:"Fair question. Good news for the US: it's a mature market, so the model is solid across most cohorts — none is red this week." },
+        { role:'bot', name:'Retention Copilot', content:"Two cohorts are decision-grade <em>and</em> actionable: <strong>Trial</strong> (R² 0.67) and <strong>New</strong> (R² 0.59). <strong>Medium</strong> and <strong>Established</strong> are directional — lower-confidence, so I read direction, not detail. <strong>Mature's</strong> model is sound, but its baseline already covers the rate and its one driver isn't actionable — reliable, but no lever. And <strong>Long-Term</strong> I park: lowest fit, almost nothing to decompose.", extra:'reliability' },
+        { role:'bot', name:'Retention Copilot', content:"So the rule for this week: <strong>act on what's decision-grade, monitor the directional, park what's too sparse.</strong> Nothing hidden — just weighted by confidence." }
+      ]
+    },
+    {
+      label:'Into the worst one · Trial', level:2, stage:3,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the worst one. What's actually driving the Trial cancels?" },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing Trial. Most of the 19.5% is <strong>baseline — 16.6pp</strong>. That's the built-in tendency of brand-new customers to leave, regardless of anything we did this week. It's the cohort, not a lever." },
+        { role:'bot', name:'Retention Copilot', content:"On top of baseline, the mover is <strong style='color:#9B2629'>Marketing +2.3pp</strong> — and almost all of it is one channel. Product adds a touch (+0.4pp), logistics trims a touch (−0.1pp). Net of a small residual, that's the observed 19.5%." }
+      ]
+    },
+    {
+      label:'Acquisition mix', level:2, stage:4,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"\"Marketing\" — translate that for me." },
+        { role:'bot', name:'Retention Copilot', content:"It's the channel customers came in through. The model splits Trial's marketing into several channel terms — and the upward pressure is overwhelmingly <strong>direct sales</strong> (75% of the group, surfacing at a 4-week lag), with small contributions from organic social and SMS." },
+        { role:'bot', name:'Retention Copilot', content:"It's a <strong>quality-of-acquisition</strong> signal: direct sales is bringing in customers who cancel faster than the rest. And because it lands at a <strong>4-week lag</strong>, it's a leading indicator — we can see the at-risk intake before the cancellations actually hit, and steer acquisition there." }
+      ]
+    },
+    {
+      label:'Trial · all the way down', level:3, stage:5,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Give me the exact sub-drivers for Trial. All the way down." },
+        { role:'bot', name:'Retention Copilot', content:"Full decomposition on the right — every term, signed, with its lag." },
+        { role:'bot', name:'Retention Copilot', content:"The single <strong>actionable lever</strong> is <code>direct_sales</code> at +1.72pp. The two box-size terms (+0.59 and −0.57pp) are product/preference signals that nearly cancel out — customer characteristics, not levers you can pull this week." }
+      ]
+    },
+    {
+      label:'New · the second lever', level:3, stage:6,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And New — our second-worst at 14%. Same pattern as Trial?" },
+        { role:'bot', name:'Retention Copilot', content:"Same shape, softer signal. New is also baseline-plus-acquisition, and it's decision-grade too (R² 0.59). But its marketing push (+1.0pp) is smaller and <strong>spread across three channels</strong>, not concentrated in one." },
+        { role:'bot', name:'Retention Copilot', content:"<strong>Call center</strong> (+0.39pp), <strong>organic social</strong> (+0.36pp) and <strong>online freebies</strong> (+0.24pp) each contribute a little; product is mildly protective. So the New lever is broad <strong>acquisition quality</strong> — no single dominant channel to fix, but the same early-lifecycle story." }
+      ]
+    },
+    {
+      label:'The watch-list', level:2, stage:10,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And the ones you flagged directional — anything we can read there?" },
+        { role:'bot', name:'Retention Copilot', content:"Yes — with a health warning. <strong>Medium</strong> and <strong>Established</strong> are <strong>directional</strong> (lower-confidence); <strong>Mature's</strong> model is sound but has no lever. Either way, all three are running <strong>cool</strong> — at or below their baselines." },
+        { role:'bot', name:'Retention Copilot', content:"<strong>Medium</strong> and <strong>Established</strong>: their drivers are mostly <em>protective</em> — logistics and box-mix terms pulling them below baseline — with a sign-warned freebies term and, on Medium, a ~7% residual. <strong>Mature</strong>: a logistics term pushes up (+10%) but a payment term offsets it (−9%), and both are non-actionable." },
+        { role:'bot', name:'Retention Copilot', content:"Bottom line: <strong>monitor, don't act.</strong> They drifted up gently this quarter, but there's no lever to pull here yet." }
+      ]
+    },
+    {
+      label:'The parked model', level:3, stage:7,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"You parked Long-Term. I want to see <em>why</em> — it's nearly half our customers." },
+        { role:'bot', name:'Retention Copilot', content:"Exactly why I'll show it. Long-Term is ~46% of the active book — but the model can barely decompose it. Its fit is the lowest of any cohort (R² 0.26), and the only structure it has is a single marketing term plus a big residual." },
+        { role:'bot', name:'Retention Copilot', content:"The baseline itself is fine — 4.0% against an observed 4.3%, perfectly plausible. The problem is there's nothing <em>inside</em> to attribute. So we surface it, flag it, and keep it out of decisions — monitor the rate, don't pretend we have levers." }
+      ]
+    },
+    {
+      label:'The one-pager', level:0, stage:8,
+      chat:[
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Perfect. Give me the one-paragraph version for the board." },
+        { role:'bot', name:'Retention Copilot', content:"<strong>US, week 21.</strong> Blended cancel rate ~6.8%, essentially tracking the model's 6.5% baseline — the market is calm and the tenured book is healthy, running at or below expectation. Cancellations are concentrated in the first weeks of a customer's life: Trial (19.5%) and New (13.8%) carry the book, tenured customers settle at 4–6%. The one clean, actionable lever is <strong>acquisition quality</strong> — Trial's direct-sales channel (+1.72pp, a 4-week leading indicator) is importing early churn, with New a softer multi-channel version of the same signal. The tenured cohorts run cool on non-actionable drivers, and Long-Term — nearly half the book — is too sparsely modelled to decompose. So we act on Trial &amp; New and monitor the rest.", extra:'decision' }
+      ]
+    }
+  ];
+
+  // ====================================================
+  // STATE + WIRING
+  // ====================================================
+  let currentStep = 0;
+  const chatStream = document.getElementById('chat-stream');
+  const stepLabel  = document.getElementById('step-label');
+  const btnPrev    = document.getElementById('btn-prev');
+  const btnNext    = document.getElementById('btn-next');
+  const stepper    = document.getElementById('stepper');
+  const intro      = document.getElementById('intro');
+  const chip1 = document.getElementById('chip-1');
+  const chip2 = document.getElementById('chip-2');
+  const chip3 = document.getElementById('chip-3');
+  const panelChat  = document.getElementById('panel-chat');
+  const panelBehind = document.getElementById('panel-behind');
+
+  function buildStepper() {
+    stepper.innerHTML = '';
+    steps.forEach((step, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'step-dot';
+      dot.addEventListener('click', () => goToStep(i));
+      stepper.appendChild(dot);
+      if (i < steps.length - 1) {
+        const conn = document.createElement('div');
+        conn.className = 'step-connector';
+        stepper.appendChild(conn);
+      }
+    });
+  }
+
+  function renderExtra(type) {
+    if (type === 'reliability') {
+      return `<div class="chat-callout">Act on <span class="dot g"></span> decision-grade · monitor <span class="dot a"></span> directional · park what's too sparse. The right panel shows the full confidence ledger.</div>`;
+    }
+    if (type === 'decision') {
+      return `<div class="chat-action"><button class="primary">Export to board deck</button><button>Schedule next week</button></div>`;
+    }
+    return '';
+  }
+
+  function renderChat() {
+    chatStream.innerHTML = '';
+    for (let i = 0; i <= currentStep; i++) {
+      const step = steps[i];
+      step.chat.forEach((msg, msgIdx) => {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble ' + msg.role;
+        const sub = msg.sub ? `<span class="role">· ${msg.sub}</span>` : '';
+        bubble.innerHTML = `
+          <div class="bubble-meta"><span>${msg.name}</span>${sub}</div>
+          <div class="bubble-content">${msg.content}${renderExtra(msg.extra)}</div>`;
+        chatStream.appendChild(bubble);
+        if (i === currentStep) {
+          setTimeout(() => bubble.classList.add('visible'), 80 + msgIdx * 260);
+        } else {
+          bubble.classList.add('visible');
+        }
+      });
+    }
+    setTimeout(() => { panelChat.scrollTop = panelChat.scrollHeight; }, 60);
+  }
+
+  function renderBehind() {
+    document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector(`.stage[data-stage="${steps[currentStep].stage}"]`);
+    if (target) target.classList.add('active');
+    panelBehind.scrollTop = 0;
+    if (steps[currentStep].stage === 1) setTimeout(animateGradBars, 120);
+    if (steps[currentStep].stage === 9) {
+      const svg = document.querySelector('#trend-chart .trend-svg');
+      if (svg) { svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw'); }
+    }
+    if (steps[currentStep].stage === 11) {
+      const svg = document.querySelector('#baseline-chart .trend-svg');
+      if (svg) { svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw'); }
+    }
+  }
+
+  function renderStepper() {
+    const dots = stepper.querySelectorAll('.step-dot');
+    const conns = stepper.querySelectorAll('.step-connector');
+    dots.forEach((d, i) => {
+      d.classList.remove('active', 'completed');
+      if (i < currentStep) d.classList.add('completed');
+      if (i === currentStep) d.classList.add('active');
+    });
+    conns.forEach((c, i) => c.classList.toggle('done', i < currentStep));
+    stepLabel.textContent = steps[currentStep].label;
+
+    const lv = steps[currentStep].level;
+    chip1.classList.toggle('active', lv === 1);
+    chip2.classList.toggle('active', lv === 2);
+    chip3.classList.toggle('active', lv === 3);
+    if (lv === 0) { chip1.classList.add('active'); chip2.classList.add('active'); chip3.classList.add('active'); }
+
+    btnPrev.disabled = currentStep === 0;
+    btnNext.disabled = currentStep === steps.length - 1;
+    btnNext.textContent = currentStep === steps.length - 1 ? 'Walkthrough complete ✓' : 'Next →';
+  }
+
+  function goToStep(n) {
+    if (n < 0 || n >= steps.length) return;
+    currentStep = n;
+    renderChat();
+    renderBehind();
+    renderStepper();
+  }
+
+  btnPrev.addEventListener('click', () => goToStep(currentStep - 1));
+  btnNext.addEventListener('click', () => goToStep(currentStep + 1));
+  document.addEventListener('keydown', (e) => {
+    if (intro.classList.contains('hidden')) {
+      if (e.key === 'ArrowRight') goToStep(currentStep + 1);
+      if (e.key === 'ArrowLeft')  goToStep(currentStep - 1);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      document.getElementById('btn-start').click();
+    }
+  });
+  document.getElementById('btn-start').addEventListener('click', () => {
+    intro.classList.add('hidden');
+    setTimeout(() => intro.remove(), 700);
+  });
+
+  // INIT
+  buildVisuals();
+  buildStepper();
+  goToStep(0);
+
+  // optional: deep-link for previews (e.g. #step=3) — dismisses intro
+  (function(){
+    const m = location.hash.match(/step=(\d+)/);
+    if (m) {
+      intro.classList.add('hidden'); setTimeout(()=>intro.remove(),50);
+      goToStep(Math.min(parseInt(m[1],10), steps.length-1));
+    }
+  })();
+</script>
+</body>
+</html>
