@@ -192,14 +192,11 @@
   }
   .chat-callout.warn { border-color: var(--accent); background: rgba(255,88,93,0.07); }
 
-  .chat-action { margin-top: 12px; display: flex; gap: 8px; }
-  .chat-action button {
-    font-family: var(--label); font-size: 11px; padding: 9px 18px; letter-spacing: 0.04em;
-    border-radius: 999px; border: 1px solid var(--ink); background: transparent;
-    color: var(--ink); cursor: pointer; transition: all 0.2s; font-weight: 600;
-  }
-  .chat-action button.primary { background: var(--saffron); color: var(--ink); border-color: var(--saffron); }
-  .chat-action button:hover { transform: translateY(-1px); }
+  /* structured board summary inside a chat bubble */
+  .chat-summary { display: flex; flex-direction: column; gap: 10px; margin-top: 2px; }
+  .chat-summary .cs-head { font-family: var(--label); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); border-bottom: 1px solid var(--line); padding-bottom: 7px; }
+  .chat-summary .cs-k { font-family: var(--label); font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 2px; }
+  .chat-summary .cs-v { font-size: 13px; line-height: 1.5; }
 
   /* ============ RIGHT PANEL (DASHBOARD) ============ */
   .panel-behind {
@@ -355,6 +352,9 @@
   .decomp-name .grp { font-family: var(--mono); font-size: 9px; color: var(--d-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
   .decomp-name code { font-family: var(--mono); font-size: 11px; color: var(--d-soft); }
   .decomp-val { font-family: var(--mono); font-weight: 600; text-align: right; }
+  /* sub-driver tables: align Lag/Type values under their right-aligned headers */
+  #decomp-new .decomp-row > div:not(:first-child),
+  #decomp-trial .decomp-row > div:not(:first-child) { text-align: right; }
   .decomp-val.pos { color: var(--d-red); } .decomp-val.neg { color: var(--d-green); }
   .lagtag { font-family: var(--mono); font-size: 9px; color: var(--d-muted); border: 1px solid var(--line-dark); padding: 1px 6px; border-radius: 4px; }
   .tag-pill { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
@@ -430,11 +430,18 @@
   .tl-row.blend .tl-sw { height: 5px; background: #fff !important; }
   .tl-row.blend .tl-name { color: #fff; font-weight: 600; }
   .tl-name { color: var(--d-text); }
+  .tl-weeks { font-size: 9px; color: var(--d-muted); margin-left: 6px; letter-spacing: 0.02em; }
   .tl-val { color: #fff; font-weight: 600; text-align: right; }
   .tl-delta { text-align: right; min-width: 58px; }
   .tl-delta.up { color: var(--d-red); }
   .tl-delta.down { color: var(--d-green); }
   .tl-delta.flat { color: var(--d-muted); }
+
+  /* ===== cohort-focus strip (which cohort this slide deep-dives) ===== */
+  .cohort-strip { display: flex; gap: 6px; margin: 2px 0 14px; flex-wrap: wrap; }
+  .cohort-strip .cs-chip { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.03em; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line-dark); color: var(--d-muted); opacity: 0.6; white-space: nowrap; }
+  .cohort-strip .cs-chip.on { opacity: 1; background: var(--saffron); border-color: var(--saffron); color: #141414; font-weight: 600; }
+  .cohort-strip .cs-chip .cs-w { opacity: 0.65; margin-left: 3px; }
 
   /* ===== directional (amber) read ===== */
   .dir-item { display: grid; grid-template-columns: 128px 1fr 172px; gap: 14px; align-items: center; padding: 14px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -545,7 +552,7 @@
           </div>
           <div class="note-box" style="margin-top:14px;">
             <div class="note-title">The one word to know · baseline</div>
-            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a specific, measured driver — what's left once we strip out everything we can explain. It sits high mostly because we're still <strong>missing signals</strong> for this group. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
+            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a measured driver. It includes <strong>organic / expected churn</strong>, but also <strong>factors we can't yet explain</strong>. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
           </div>
           <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
@@ -596,25 +603,30 @@
           </div>
         </div>
 
-        <!-- STAGE 11 · BASELINE vs OBSERVED (market level) -->
+        <!-- STAGE 11 · WHERE THE DRIVERS EXPLAIN THE MOST (Trial & New vs their baselines) -->
         <div class="stage" data-stage="11">
-          <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · Sweden blend</div>
-          <h2 class="stage-title">How much can we actually explain?</h2>
-          <p class="stage-desc">Observed against the model's <strong>baseline</strong> — the part of the rate we <em>can't yet attribute</em> to measured drivers. The gap between the two lines is how much the drivers actually <em>explain</em>. Blended across all six cohorts (active-customer-weighted), observed sits <strong>above</strong> baseline almost every week — so there's a real attributable layer on top of the large unexplained base, and that's the bit we can act on.</p>
-          <div class="note-box warn">
-            <div class="note-title">What the gap says</div>
-            <div class="note-body">At W20, observed (13.6%) sits <strong style="color:var(--d-soft)">+2.9pp</strong> above baseline (10.7%) — that gap is the part the measured drivers <em>explain</em>, and it's the bit we can act on (acquisition quality in New, momentum in Trial). It narrowed in the January dip, then widened through spring. The much larger baseline underneath is churn we <em>can't</em> yet attribute — signals we're still missing.</div>
+          <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · Trial &amp; New</div>
+          <h2 class="stage-title">Where the drivers explain the most.</h2>
+          <p class="stage-desc">Each cohort's observed rate against its <strong>baseline</strong> — the part the model can't yet attribute to a measured driver. The gap above the dashed line is what the measured drivers <em>explain</em>: the attributable, actionable layer. It's widest exactly where the rate is worst — the two early cohorts.</p>
+          <div class="card">
+            <div class="card-head"><span>Trial · observed vs baseline · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
+            <div id="explain-trial"></div>
+            <div id="explain-trial-legend"></div>
           </div>
           <div class="card">
-            <div class="card-head"><span>Observed vs model baseline · Sweden blend · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
-            <div id="baseline-chart"></div>
-            <div id="baseline-legend"></div>
+            <div class="card-head"><span>New · observed vs baseline · 26 weeks</span><span class="right">→ 2026-05-11 · W20</span></div>
+            <div id="explain-new"></div>
+            <div id="explain-new-legend"></div>
+          </div>
+          <div class="note-box ok">
+            <div class="note-title">What the gaps say</div>
+            <div class="note-body">At W20 <strong>Trial</strong> runs <strong style="color:var(--d-red)">+8.2pp</strong> above its 15.5% baseline — the largest explained layer of any cohort, but mostly <strong>momentum</strong> (the rate feeding itself), unpacked in its own chapter. <strong>New</strong> runs <strong style="color:var(--d-red)">+1.1pp</strong> above 16.5% — smaller, but the clean acquisition lever we can actually pull. Market-wide the gap is +2.9pp, thinning down the tenure ladder — the explainable, actionable churn is concentrated up front. That's where we drill next.</div>
           </div>
         </div>
 
         <!-- STAGE 2 · RELIABILITY -->
         <div class="stage" data-stage="2">
-          <div class="kicker"><span class="level-tag l1">L1</span> Reliability check · before we act</div>
+          <div class="kicker"><span class="level-tag l1">L1</span> Reliability check · before you quote it</div>
           <h2 class="stage-title">Show everything. Trust selectively.</h2>
           <p class="stage-desc">Sweden is a younger market, so the model isn't equally mature across cohorts. We surface all six — but we're explicit about which carry decision-grade confidence and which are still gathering history.</p>
           <div class="card">
@@ -635,8 +647,9 @@
         <!-- STAGE 3 · L2 DRIVERS (NEW) -->
         <div class="stage" data-stage="3">
           <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · New cohort <span class="qdot g" style="margin-left:4px;"></span></div>
-          <h2 class="stage-title">Baseline does most of it. Three levers do the rest.</h2>
-          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate. The baseline is the part the model <em>can't yet attribute</em> to a measured driver — what's left unexplained; the floating bars are this week's measured drivers on top of it.</p>
+          <div class="cohort-strip" data-on="New"></div>
+          <h2 class="stage-title">Three drivers on top of baseline — one we can pull.</h2>
+          <p class="stage-desc">Decomposing the New cohort's 17.6% observed cancel rate — our cleanest decision-grade lever (R² 0.46). Above the 16.5pp baseline (the part not yet attributable to a measured driver), the floating bars are the explained layer: marketing, product and a protective payment term — and the marketing piece is the one we can act on.</p>
           <div class="card">
             <div class="card-head"><span>New · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
             <div class="wf-wrap"><div id="wf-new"></div></div>
@@ -654,7 +667,8 @@
 
         <!-- STAGE 4 · L2 CHANNEL MIX -->
         <div class="stage" data-stage="4">
-          <div class="kicker"><span class="level-tag l2">L2</span> Segmentation scan · acquisition mix</div>
+          <div class="kicker"><span class="level-tag l2">L2</span> Segmentation scan · New acquisition mix</div>
+          <div class="cohort-strip" data-on="New"></div>
           <h2 class="stage-title">It's a quality-of-acquisition signal.</h2>
           <p class="stage-desc">The marketing group breaks into four channel terms in the model. Two contribute this week; two are in the model but didn't fire (their input was zero in W20). Every figure below is the model's W20 output.</p>
           <div class="card">
@@ -663,7 +677,7 @@
           </div>
           <div class="card">
             <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">W20</span></div>
-            <div class="decomp-row head"><div>Channel term</div><div>Contribution</div><div>% of CR</div><div>% of group</div></div>
+            <div class="decomp-row head"><div>Channel term</div><div style="text-align:right">Contribution</div><div style="text-align:right">% of CR</div><div style="text-align:right">% of group</div></div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_freebies_offline</code> <span class="lagtag">lag 2</span></div>
               <div class="decomp-val pos">+1.33pp</div><div class="decomp-val pos">+7.3%</div><div class="rel-r2" style="text-align:right">79.6%</div>
@@ -694,11 +708,12 @@
         <!-- STAGE 5 · L3 NEW SUB-DRIVERS -->
         <div class="stage" data-stage="5">
           <div class="kicker"><span class="level-tag l3">L3</span> Sub-driver decomposition · New <span class="qdot g" style="margin-left:4px;"></span></div>
+          <div class="cohort-strip" data-on="New"></div>
           <h2 class="stage-title">All the way down.</h2>
           <p class="stage-desc">Every sub-driver the model used for the New cohort this week, with its signed contribution and the lag at which it acts. The lever you can actually pull is the offline-freebies channel.</p>
           <div class="card">
             <div class="card-head"><span>New · sub-drivers</span><span class="right">contribution · lag · type</span></div>
-            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div style="text-align:right">Contribution</div><div style="text-align:right">Lag</div><div style="text-align:right">Type</div></div>
             <div id="decomp-new"></div>
           </div>
           <div class="note-box ok">
@@ -710,6 +725,7 @@
         <!-- STAGE 6 · L3 TRIAL MOMENTUM -->
         <div class="stage" data-stage="6">
           <div class="kicker"><span class="level-tag l3">L3</span> Sub-driver decomposition · Trial <span class="qdot g" style="margin-left:4px;"></span></div>
+          <div class="cohort-strip" data-on="Trial"></div>
           <h2 class="stage-title">Trial is momentum, not an event.</h2>
           <p class="stage-desc">Our worst cohort at 23.7%. The dominant driver is <strong>momentum</strong> — the rate's tendency to repeat itself week to week. It's run ~30% of Trial's rate for over a month, so it's a <strong>standing condition</strong>, not last week's blip; the only fresh, week-specific inputs (PayPal, error rates) are small.</p>
           <div class="card">
@@ -733,7 +749,7 @@
           </div>
           <div class="card">
             <div class="card-head"><span>Trial · sub-drivers</span><span class="right">contribution · lag · type</span></div>
-            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div style="text-align:right">Contribution</div><div style="text-align:right">Lag</div><div style="text-align:right">Type</div></div>
             <div id="decomp-trial"></div>
           </div>
           <div class="note-box warn">
@@ -745,6 +761,7 @@
         <!-- STAGE 12 · INSIDE THE MOMENTUM (W19 → W20 autoregressive unpack, one level only) -->
         <div class="stage" data-stage="12">
           <div class="kicker"><span class="level-tag l3">L3</span> Trial · inside the momentum <span class="qdot g" style="margin-left:4px;"></span></div>
+          <div class="cohort-strip" data-on="Trial"></div>
           <h2 class="stage-title">What the momentum is dragging forward.</h2>
           <p class="stage-desc"><strong>Momentum is inertia.</strong> Trial's cancel rate is sticky — a high week tends to be followed by another high week. About a third of this week's rate is simply <strong>last week, repeating</strong>: not a fresh problem, a standing one. Here's exactly what it's carrying.</p>
           <div class="card">
@@ -776,6 +793,7 @@
         <!-- STAGE 7 · L3 LONG-TERM RED -->
         <div class="stage" data-stage="7">
           <div class="kicker"><span class="level-tag l3">L3</span> Transparency · the parked model <span class="qdot r" style="margin-left:4px;"></span></div>
+          <div class="cohort-strip" data-on="Long-Term"></div>
           <h2 class="stage-title">Here's the thing we don't trust — and why.</h2>
           <p class="stage-desc">We don't hide weak models, we show their failure mode. Long-Term's baseline overshoots the observed rate by 2.5×, forcing a single product term into a non-physical correction to reconcile.</p>
           <div class="card">
@@ -796,6 +814,7 @@
         <!-- STAGE 10 · DIRECTIONAL READ (amber cohorts) -->
         <div class="stage" data-stage="10">
           <div class="kicker"><span class="level-tag l2">L2</span> Directional read · watch-list cohorts <span class="qdot a" style="margin-left:4px;"></span></div>
+          <div class="cohort-strip" data-on="Medium,Established,Mature"></div>
           <h2 class="stage-title">Read it — don't bet on it.</h2>
           <p class="stage-desc">The directional cohorts are exactly the ones the trend shows drifting up. Their models are lower-confidence, so we point at the top driver without prescribing action — investigate, not act.</p>
           <div class="card">
@@ -824,15 +843,15 @@
 
         <!-- STAGE 8 · SYNTHESIS -->
         <div class="stage" data-stage="8">
-          <div class="kicker"><span class="level-tag sum">Σ</span> Synthesis · the board one-pager</div>
+          <div class="kicker"><span class="level-tag sum">Σ</span> Executive summary · the board one-pager</div>
           <h2 class="stage-title">Sweden, in five lines.</h2>
-          <p class="stage-desc">The whole conversation, compressed to what a board needs to decide on.</p>
+          <p class="stage-desc">What a board needs to decide on, up front. Each line jumps to the evidence behind it — the walkthrough that follows.</p>
           <div class="exec-card">
             <div class="exec-num"><div class="exec-n">1</div><div class="exec-t"><strong>Cancellations are front-loaded by tenure.</strong> Trial (<span class="up">23.7%</span>) and New (<span class="up">17.6%</span>) carry the book; tenured customers settle at 5–8%. The risk lives in the first weeks of a customer's life — not a one-off spike.<button class="exec-jump" onclick="goToStep(3)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">2</div><div class="exec-t"><strong>One clean lever this week:</strong> acquisition quality in New — <span class="up">offline-freebies (+1.33pp)</span> is importing early churn.<button class="exec-jump" onclick="goToStep(6)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">3</div><div class="exec-t"><strong>Trial needs an onboarding fix, not a tweak.</strong> 32.5% of its rate is momentum carried from the prior week (autoregressive term).<button class="exec-jump" onclick="goToStep(8)">see it →</button></div></div>
             <div class="exec-num"><div class="exec-n">4</div><div class="exec-t"><strong>Long-Term isn't model-mature here.</strong> Its baseline is 249% of the observed rate — surfaced but parked.<button class="exec-jump" onclick="goToStep(11)">see it →</button></div></div>
-            <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Act on New &amp; Trial, watch the directional cohorts, park Long-Term.</strong> New &amp; Trial are decision-grade; keep building data on the rest.<button class="exec-jump" onclick="goToStep(4)">see it →</button></div></div>
+            <div class="exec-num"><div class="exec-n">5</div><div class="exec-t"><strong>Act on New &amp; Trial, watch the directional cohorts, park Long-Term.</strong> New &amp; Trial are decision-grade; keep building data on the rest.<button class="exec-jump" onclick="goToStep(12)">see it →</button></div></div>
           </div>
           <div class="note-box warn" style="margin-bottom:14px;">
             <div class="note-title">Direction</div>
@@ -909,7 +928,10 @@
   // weekly model_A files (2025-W46 → 2026-W19) + the W20 snapshot. Observed blend is computed
   // in-browser from TV_HIST and matches these files exactly (0.000pp). NOT synthesized.
   // ====================================================
-  const TV_BASELINE_BLEND = [0.1032, 0.0886, 0.0895, 0.0851, 0.0840, 0.0829, 0.0819, 0.0871, 0.0882, 0.1015, 0.1104, 0.1149, 0.1230, 0.1236, 0.1278, 0.1105, 0.1059, 0.1127, 0.1134, 0.1154, 0.1115, 0.1079, 0.1127, 0.1110, 0.1081, 0.1066];
+  const TV_BASELINE_BLEND = [0.1032, 0.0886, 0.0895, 0.0851, 0.0840, 0.0829, 0.0819, 0.0871, 0.0882, 0.1015, 0.1104, 0.1149, 0.1230, 0.1236, 0.1278, 0.1105, 0.1059, 0.1127, 0.1134, 0.1154, 0.1115, 0.1079, 0.1127, 0.1110, 0.1081, 0.1066]; // source of the market-wide +2.9pp reference
+  // per-cohort weekly baselines, verbatim from the model_A files (2025-W46 → 2026-W19 + W20 snapshot), aligned 1:1 to TV_HIST weeks (ISO W01 not in the plotted window)
+  const TV_BASE_TRIAL = [0.1459, 0.1436, 0.1494, 0.1403, 0.1412, 0.1417, 0.1395, 0.1526, 0.1429, 0.1454, 0.1588, 0.1596, 0.1597, 0.1609, 0.1570, 0.1564, 0.1575, 0.1627, 0.1655, 0.1656, 0.1545, 0.1655, 0.1651, 0.1651, 0.1550, 0.1548];
+  const TV_BASE_NEW   = [0.1654, 0.1653, 0.1653, 0.1652, 0.1652, 0.1652, 0.1664, 0.1613, 0.1609, 0.1646, 0.1352, 0.1658, 0.1659, 0.1659, 0.1671, 0.1344, 0.1305, 0.1647, 0.1644, 0.1652, 0.1669, 0.1651, 0.1631, 0.1649, 0.1640, 0.1653];
 
   // New cohort waterfall  (16.5 +1.7 +1.5 -1.5 -0.1 -0.5 = 17.6)
   const WF_NEW = {
@@ -1193,13 +1215,14 @@
       + grid + anchor + lines + dots + xlab + `</svg>`;
 
     // legend with latest value + Δ vs 4 weeks
-    const QUAL = Object.fromEntries(TENURES.map(t => [t.key, t.q]));   // confidence ring per cohort
+    const QUAL  = Object.fromEntries(TENURES.map(t => [t.key, t.q]));   // confidence ring per cohort
+    const WEEKS = Object.fromEntries(TENURES.map(t => [t.key, t.weeks]));
     const rows = TREND_ORDER.map(k => {
       const s = TV_HIST[k];
       const now = s[n-1][1], prev = s[n-14][1];   // Δ vs start of quarter (13 weeks back)
       const d = deltaTag(now, prev);
       return `<div class="tl-row"><span class="tl-sw" style="background:${TREND_COLOR[k]}"></span>`
-        + `<span class="tl-name"><span class="qdot ${QUAL[k]}" style="margin-right:6px;"></span>${k}</span><span class="tl-val">${(now*100).toFixed(1)}%</span>`
+        + `<span class="tl-name"><span class="qdot ${QUAL[k]}" style="margin-right:6px;"></span>${k}<span class="tl-weeks">${WEEKS[k]}</span></span><span class="tl-val">${(now*100).toFixed(1)}%</span>`
         + `<span class="tl-delta ${d.cls}">${d.html}</span></div>`;
     }).join('');
     const bd = deltaTag(blend[n-1], blend[n-14]);
@@ -1209,54 +1232,62 @@
     document.getElementById('trend-legend').innerHTML = blendRow + rows;
   }
 
-  // ----- market-level baseline vs observed (real model_A baseline, active-customer-weighted) -----
-  function renderBaselineTrend() {
+  // ----- per-cohort observed vs baseline (real weekly model_A baselines) -----
+  function renderExplainChart(chartId, legendId, obs, base, color, name) {
     const weeks = TV_HIST['Trial'].map(d => d[0]);
     const n = weeks.length;
-    const obs = computeBlend();              // blended observed — same weights as the per-cohort trend
-    const base = TV_BASELINE_BLEND;          // blended model baseline
-    let maxv = 0;
-    obs.concat(base).forEach(v => { if (v > maxv) maxv = v; });
-    const maxY = Math.ceil((maxv * 100) / 5) * 5;
-    const W = 640, H = 240, L = 32, R = 14, T = 12, B = 30;
+    let lo = Infinity, hi = 0;
+    obs.concat(base).forEach(v => { if (v < lo) lo = v; if (v > hi) hi = v; });
+    const minY = Math.floor(lo * 100) - 1, maxY = Math.ceil(hi * 100) + 1;
+    const W = 640, H = 170, L = 32, R = 14, T = 10, B = 24;
     const pw = W - L - R, ph = H - T - B;
     const X = i => L + (n <= 1 ? 0 : (i / (n - 1)) * pw);
-    const Y = v => T + (1 - (v * 100) / maxY) * ph;
+    const Y = v => T + (1 - ((v * 100) - minY) / (maxY - minY)) * ph;
     const pts = arr => arr.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ');
     let grid = '';
-    for (let t = 0; t <= maxY; t += 5) {
+    for (let t = minY; t <= maxY; t += 1) {
       const y = Y(t / 100);
       grid += `<line class="trend-grid" x1="${L}" y1="${y.toFixed(1)}" x2="${W - R}" y2="${y.toFixed(1)}"/>`;
-      if (t % 10 === 0) grid += `<text class="trend-tick" x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${t}%</text>`;
+      if (t % 2 === 0) grid += `<text class="trend-tick" x="${L - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${t}%</text>`;
     }
     let xlab = '';
     const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     let prevMon = '';
     weeks.forEach((w, i) => {
       const m = w.slice(5, 7);
-      if (m !== prevMon) { prevMon = m; xlab += `<text class="trend-tick" x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle">${MON[parseInt(m,10)-1]}</text>`; }
+      if (m !== prevMon) { prevMon = m; xlab += `<text class="trend-tick" x="${X(i).toFixed(1)}" y="${H - 8}" text-anchor="middle">${MON[parseInt(m,10)-1]}</text>`; }
     });
     const ax = X(n - 1);
     const anchor = `<line class="trend-anchor" x1="${ax.toFixed(1)}" y1="${T}" x2="${ax.toFixed(1)}" y2="${T + ph}"/>`
       + `<text class="trend-tick" x="${(ax - 3).toFixed(1)}" y="${T + 9}" text-anchor="end" style="fill:#cdd5cc">W20</text>`;
-    // shaded gap between observed and baseline = the layer the measured drivers explain (neutral fill)
+    // shaded gap between observed and baseline — the layer the measured drivers explain
     const gapPts = obs.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
       + ' ' + base.map((v, i) => `${X(n-1-i).toFixed(1)},${Y(base[n-1-i]).toFixed(1)}`).join(' ');
-    const fill = `<polygon points="${gapPts}" fill="rgba(255,255,255,0.06)" stroke="none"/>`;
+    const fill = `<polygon points="${gapPts}" fill="rgba(255,255,255,0.10)" stroke="none"/>`;
     const baseLine = `<polyline points="${pts(base)}" fill="none" stroke="var(--d-soft)" stroke-width="2" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
-    const obsLine = `<polyline points="${pts(obs)}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>`;
-    const dots = `<circle cx="${ax.toFixed(1)}" cy="${Y(obs[n-1]).toFixed(1)}" r="3.5" fill="#fff" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`
+    const obsLine = `<polyline points="${pts(obs)}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>`;
+    const dots = `<circle cx="${ax.toFixed(1)}" cy="${Y(obs[n-1]).toFixed(1)}" r="3.5" fill="${color}" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`
       + `<circle cx="${ax.toFixed(1)}" cy="${Y(base[n-1]).toFixed(1)}" r="3" fill="var(--d-soft)" stroke="var(--bg-dark-panel)" stroke-width="1.5"/>`;
-    document.getElementById('baseline-chart').innerHTML =
+    document.getElementById(chartId).innerHTML =
       `<svg class="trend-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">`
       + grid + anchor + fill + baseLine + obsLine + dots + xlab + `</svg>`;
     const o = obs[n-1]*100, b = base[n-1]*100, g = o - b;
-    document.getElementById('baseline-legend').innerHTML =
-      `<div style="display:flex;flex-wrap:wrap;gap:9px 22px;margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--d-soft)">`
-      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;height:3px;background:#fff;border-radius:2px"></span>Observed <strong style="color:#fff;margin-left:2px">${o.toFixed(1)}%</strong></span>`
-      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;border-top:2px dashed var(--d-soft)"></span>Model baseline <strong style="color:#fff;margin-left:2px">${b.toFixed(1)}%</strong></span>`
-      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Explained by drivers · obs − baseline · W20 <strong style="color:var(--d-soft);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
+    document.getElementById(legendId).innerHTML =
+      `<div style="display:flex;flex-wrap:wrap;gap:9px 22px;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--d-soft)">`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;height:3px;background:${color};border-radius:2px"></span>${name} observed <strong style="color:#fff;margin-left:2px">${o.toFixed(1)}%</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:16px;border-top:2px dashed var(--d-soft)"></span>Baseline <strong style="color:#fff;margin-left:2px">${b.toFixed(1)}%</strong></span>`
+      + `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:10px;background:rgba(255,255,255,0.18);border-radius:2px"></span>Explained by drivers · W20 <strong style="color:var(--d-red);margin-left:2px">${g>=0?'+':'−'}${Math.abs(g).toFixed(1)}pp</strong></span>`
       + `</div>`;
+  }
+
+  // which cohort(s) a deep-dive slide focuses on — lifecycle strip, active chip(s) highlighted
+  function renderCohortStrips() {
+    document.querySelectorAll('.cohort-strip').forEach(el => {
+      const on = el.dataset.on.split(',');
+      el.innerHTML = TENURES.map(t =>
+        `<span class="cs-chip${on.includes(t.key) ? ' on' : ''}">${t.key}<span class="cs-w">${t.weeks}</span></span>`
+      ).join('');
+    });
   }
 
   // build all static visuals once
@@ -1272,7 +1303,9 @@
     renderDecomp('decomp-trial', DECOMP_TRIAL);
     renderMomentum();
     renderTrend();
-    renderBaselineTrend();
+    renderExplainChart('explain-trial', 'explain-trial-legend', TV_HIST['Trial'].map(d => d[1]), TV_BASE_TRIAL, TREND_COLOR['Trial'], 'Trial');
+    renderExplainChart('explain-new', 'explain-new-legend', TV_HIST['New'].map(d => d[1]), TV_BASE_NEW, TREND_COLOR['New'], 'New');
+    renderCohortStrips();
   }
 
   function animateGradBars() {
@@ -1288,20 +1321,20 @@
   const steps = [
     { label:'Session opens', level:1, stage:0, chat:[] },
     {
-      label:'The direction', level:1, stage:9,
+      label:'The one-pager', level:0, stage:8,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"Morning. Quick read on Sweden before the board call — how are cancellations tracking this week, and is anything on fire?" },
-        { role:'bot', name:'Retention Copilot', content:"Morning. Nothing's on fire — this week the blended cancel rate is <strong>~13.6%</strong>, broadly flat after the usual January dip. But the blend hides the story, so let me lead with the <strong>26-week direction</strong>." },
-        { role:'bot', name:'Retention Copilot', content:"At market level it's steady — but the cohorts underneath are moving. Watch the lines on the right:" },
-        { role:'bot', name:'Retention Copilot', content:"Over the last quarter <strong style='color:#9B2629'>Medium (+3.8pp)</strong> and <strong style='color:#9B2629'>Long-Term (+2.7pp)</strong> have drifted up the most, with Established and Mature also rising — while <strong style='color:#2C7A2A'>New eased −1.0pp</strong> in the last month. So it's not a spike; it's a slow upward drift in the mid-tenure cohorts. <em>That's</em> what to watch." }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Morning. Before we get into anything — give me the summary up front. The one-paragraph version I'd hand the board, then walk me through how you got there." },
+        { role:'bot', name:'Retention Copilot', content:"<div class='chat-summary'><div class='cs-head'>Sweden · Week 20 · the board version</div><div class='cs-row'><div class='cs-k'>Headline</div><div class='cs-v'>Blended cancel rate <strong>~13.6%</strong>, broadly flat at market level — but most cohorts drifted up this quarter, <strong>Medium</strong> and <strong>Long-Term</strong> most. The churn the model explains sits up front: <strong>Trial +8.2pp</strong> and <strong>New +1.1pp</strong> above their baselines.</div></div><div class='cs-row'><div class='cs-k'>Where it sits</div><div class='cs-v'>The first weeks of a customer's life: <strong>Trial (23.7%)</strong> and <strong>New (17.6%)</strong> carry the book; tenured customers settle at 5–8%.</div></div><div class='cs-row'><div class='cs-k'>The lever</div><div class='cs-v'><strong>Acquisition quality in New.</strong> <strong style='color:#9B2629'>Offline freebies (+1.33pp)</strong>, a 2-week leading indicator, are importing early churn. Trial is <strong>momentum-driven</strong> — a standing condition that needs an onboarding fix, not a weekly tweak.</div></div><div class='cs-row'><div class='cs-k'>The call</div><div class='cs-v'><strong>Act on New &amp; Trial; watch the directional cohorts, park Long-Term.</strong> New &amp; Trial are decision-grade; half the tenure ladder isn't model-mature yet — we keep building data on the rest.</div></div></div>" },
+        { role:'bot', name:'Retention Copilot', content:"That's the destination. Each line on the right jumps to its evidence — <strong>see it →</strong> — or follow me through it step by step." }
       ]
     },
     {
-      label:'What can we explain?', level:1, stage:11,
+      label:'The direction', level:1, stage:9,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — versus what it's just not capturing?" },
-        { role:'bot', name:'Retention Copilot', content:"Here's the blended observed rate against the model's <strong>baseline</strong> — the part it <em>can't</em> attribute to a measured driver." },
-        { role:'bot', name:'Retention Copilot', content:"Observed sits <strong>above</strong> baseline almost every week. At W20 it's <strong>13.6%</strong> vs a <strong>10.7%</strong> baseline — about <strong style='color:#9B2629'>+2.9pp</strong>. That gap is the layer the measured drivers <em>explain</em>, and it's the part we can act on. The much bigger baseline underneath is churn we <em>can't</em> yet attribute — signals we're still missing." }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Good — that's the map. Now walk me through it. Start with the direction: how have cancellations been tracking, and is anything on fire?" },
+        { role:'bot', name:'Retention Copilot', content:"Nothing's on fire — this week the blended cancel rate is <strong>~13.6%</strong>, broadly flat after the usual January dip. But the blend hides the story, so let me lead with the <strong>26-week direction</strong>." },
+        { role:'bot', name:'Retention Copilot', content:"At market level it's steady — but the cohorts underneath are moving. Watch the lines on the right:" },
+        { role:'bot', name:'Retention Copilot', content:"Over the last quarter <strong style='color:#9B2629'>Medium (+3.8pp)</strong> and <strong style='color:#9B2629'>Long-Term (+2.7pp)</strong> have drifted up the most, with Established and Mature also rising — while <strong style='color:#2C7A2A'>New eased −1.0pp</strong> in the last month. So it's not a spike; it's a slow upward drift in the mid-tenure cohorts. <em>That's</em> what to watch." }
       ]
     },
     {
@@ -1313,20 +1346,19 @@
       ]
     },
     {
-      label:'Can I trust it?', level:1, stage:2,
+      label:'Where we explain most', level:1, stage:11,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"Before I quote any of that to the board — how much of it can I actually trust?" },
-        { role:'bot', name:'Retention Copilot', content:"Fair question, and important for Sweden specifically: it's a younger market, so the model isn't equally mature across every cohort." },
-        { role:'bot', name:'Retention Copilot', content:"Two cohorts are decision-grade: <strong>New</strong> (R² 0.46) and <strong>Trial</strong> (R² 0.56). Three are directional only. And <strong>Long-Term isn't mature here</strong> — I'll show it, but its baseline alone is 2.5× the observed rate, so it's not stable here yet.", extra:'reliability' },
-        { role:'bot', name:'Retention Copilot', content:"So the rule for this week: <strong>act on what's decision-grade, watch the directional, park what's not mature.</strong> Nothing hidden — just weighted by confidence." }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — where do the drivers tell us the most?" },
+        { role:'bot', name:'Retention Copilot', content:"Exactly where we can act. On the right are the two early cohorts against their <strong>baselines</strong> — the dashed line is the part we can't yet attribute; the shaded gap above it is what the measured drivers <em>explain</em>." },
+        { role:'bot', name:'Retention Copilot', content:"<strong>Trial</strong> runs <strong style='color:#9B2629'>+8.2pp</strong> above its 15.5% baseline at W20 — the largest explained layer of any cohort, though most of it is <strong>momentum</strong> (the rate feeding itself), which I'll unpack shortly. <strong>New</strong> runs <strong style='color:#9B2629'>+1.1pp</strong> above 16.5% — smaller, but the <em>clean acquisition lever</em>, and decision-grade. Market-wide the gap is +2.9pp, thinning down the tenure ladder. That's where I'll take you next." }
       ]
     },
     {
       label:'Into the green', level:2, stage:3,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the green. What's actually driving the New-customer cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing New. Most of the 17.6% sits in the <strong>baseline — 16.5pp</strong>: the part of the rate the model <em>can't yet attribute</em> to a measured driver — likely factors we don't measure and limited data on this cohort. The drivers on top are the bit we can attribute and act on." },
-        { role:'bot', name:'Retention Copilot', content:"On top of baseline, three things move the needle: <strong style='color:#9B2629'>Marketing +1.7pp</strong> (pushes cancels up), <strong style='color:#9B2629'>Product +1.5pp</strong> up, and <strong style='color:#2C7A2A'>Payment −1.5pp</strong> — actually protective. Net of a small residual, that's the observed 17.6%." }
+        { role:'bot', name:'Retention Copilot', content:"Decomposing New — our cleanest decision-grade cohort. Above its 16.5pp baseline (the part not yet attributable to a measured driver), three drivers move the rate: that's the layer we can name and act on." },
+        { role:'bot', name:'Retention Copilot', content:"On top of baseline, three things move the needle: <strong style='color:#9B2629'>Marketing +1.7pp</strong> (pushes cancels up), <strong style='color:#9B2629'>Product +1.5pp</strong> up, and <strong style='color:#2C7A2A'>Payment −1.5pp</strong> — actually protective. Net of a small residual, that's the observed 17.6% — and the marketing piece is the lever we can actually pull." }
       ]
     },
     {
@@ -1379,10 +1411,12 @@
       ]
     },
     {
-      label:'The one-pager', level:0, stage:8,
+      label:'Can I trust it?', level:1, stage:2,
       chat:[
-        { role:'user', name:'Simon', sub:'Factor Europe', content:"Perfect. Give me the one-paragraph version for the board." },
-        { role:'bot', name:'Retention Copilot', content:"<strong>Sweden, week 20.</strong> Blended cancel rate ~13.6%, broadly flat at market level — but the 26-week trend shows most cohorts drifting up this quarter, <strong>Medium and Long-Term</strong> most. Cancellations are concentrated in the first weeks of a customer's life: Trial (24%) and New (18%) drive the book, tenured customers far lower — a persistent lifecycle pattern, not a one-off spike. The one clean, actionable lever is <strong>acquisition quality in New</strong> — offline freebies are importing early churn. Trial is momentum-driven and needs an onboarding fix, not a weekly tweak. Half the tenure ladder isn't model-mature yet, so for now we act on New &amp; Trial and keep building data on the rest.", extra:'decision' }
+        { role:'user', name:'Simon', sub:'Factor Europe', content:"Last thing, before I quote any of this to the board — how much of it can I actually trust?" },
+        { role:'bot', name:'Retention Copilot', content:"Fair question to close on — and important for Sweden specifically: it's a younger market, so the model isn't equally mature across every cohort." },
+        { role:'bot', name:'Retention Copilot', content:"Two cohorts are decision-grade: <strong>New</strong> (R² 0.46) and <strong>Trial</strong> (R² 0.56). Three are directional only. And <strong>Long-Term isn't mature here</strong> — I'll show it, but its baseline alone is 2.5× the observed rate, so it's not stable here yet.", extra:'reliability' },
+        { role:'bot', name:'Retention Copilot', content:"So the rule for everything you've just seen: <strong>act on what's decision-grade, watch the directional, park what's not mature.</strong> Nothing hidden — just weighted by confidence." }
       ]
     }
   ];
@@ -1469,9 +1503,6 @@
         <div class="chat-mini-row"><div>error_rates</div><div class="v-lo">−0.37</div><div>−1.6%</div></div>
       </div>`;
     }
-    if (type === 'decision') {
-      return `<div class="chat-action"><button class="primary">Export to board deck</button><button>Schedule next week</button></div>`;
-    }
     return '';
   }
 
@@ -1508,8 +1539,9 @@
       if (svg) { svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw'); }
     }
     if (steps[currentStep].stage === 11) {
-      const svg = document.querySelector('#baseline-chart .trend-svg');
-      if (svg) { svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw'); }
+      document.querySelectorAll('#explain-trial .trend-svg, #explain-new .trend-svg').forEach(svg => {
+        svg.classList.remove('draw'); void svg.offsetWidth; svg.classList.add('draw');
+      });
     }
   }
 

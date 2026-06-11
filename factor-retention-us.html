@@ -353,6 +353,9 @@
   .decomp-name .grp { font-family: var(--mono); font-size: 9px; color: var(--d-muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px; }
   .decomp-name code { font-family: var(--mono); font-size: 11px; color: var(--d-soft); }
   .decomp-val { font-family: var(--mono); font-weight: 600; text-align: right; }
+  /* sub-driver tables: align Lag/Type values under their right-aligned headers */
+  #decomp-trial .decomp-row > div:not(:first-child),
+  #decomp-new .decomp-row > div:not(:first-child) { text-align: right; }
   .decomp-val.pos { color: var(--d-red); } .decomp-val.neg { color: var(--d-green); }
   .lagtag { font-family: var(--mono); font-size: 9px; color: var(--d-muted); border: 1px solid var(--line-dark); padding: 1px 6px; border-radius: 4px; }
   .tag-pill { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
@@ -675,7 +678,7 @@
           </div>
           <div class="card">
             <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">W21</span></div>
-            <div class="decomp-row head"><div>Channel term</div><div>Contribution</div><div>% of CR</div><div>% of group</div></div>
+            <div class="decomp-row head"><div>Channel term</div><div style="text-align:right">Contribution</div><div style="text-align:right">% of CR</div><div style="text-align:right">% of group</div></div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_direct_sales</code> <span class="lagtag">lag 4</span></div>
               <div class="decomp-val pos">+1.72pp</div><div class="decomp-val pos">+9.0%</div><div class="rel-r2" style="text-align:right">75.0%</div>
@@ -715,7 +718,7 @@
           <p class="stage-desc">Every sub-driver the model used for the Trial cohort this week, with its signed contribution and the lag at which it acts. The lever you can actually pull is the direct-sales channel.</p>
           <div class="card">
             <div class="card-head"><span>Trial · sub-drivers</span><span class="right">contribution · lag · type</span></div>
-            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div style="text-align:right">Contribution</div><div style="text-align:right">Lag</div><div style="text-align:right">Type</div></div>
             <div id="decomp-trial"></div>
           </div>
           <div class="note-box ok">
@@ -745,7 +748,7 @@
           </div>
           <div class="card">
             <div class="card-head"><span>New · sub-drivers</span><span class="right">contribution · lag · type</span></div>
-            <div class="decomp-row head"><div>Sub-driver</div><div>Contribution</div><div>Lag</div><div>Type</div></div>
+            <div class="decomp-row head"><div>Sub-driver</div><div style="text-align:right">Contribution</div><div style="text-align:right">Lag</div><div style="text-align:right">Type</div></div>
             <div id="decomp-new"></div>
           </div>
           <div class="note-box ok">
