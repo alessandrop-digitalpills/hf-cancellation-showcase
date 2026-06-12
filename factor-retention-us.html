@@ -357,6 +357,11 @@
   #decomp-trial .decomp-row > div:not(:first-child),
   #decomp-new .decomp-row > div:not(:first-child) { text-align: right; }
   .decomp-val.pos { color: var(--d-red); } .decomp-val.neg { color: var(--d-green); }
+  /* channel-decomposition table: 2 columns (term | contribution) + summary rows */
+  .chan-decomp .decomp-row { grid-template-columns: 1fr auto; }
+  .chan-decomp .decomp-row.sum { border-top: 1px solid var(--line-dark); }
+  .chan-decomp .decomp-row.sum:first-of-type { border-top-width: 2px; }
+  .chan-decomp .decomp-row.sum .decomp-name { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--d-soft); }
   .lagtag { font-family: var(--mono); font-size: 9px; color: var(--d-muted); border: 1px solid var(--line-dark); padding: 1px 6px; border-radius: 4px; }
   .tag-pill { font-family: var(--mono); font-size: 9px; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
   .tag-pill.lever { background: rgba(255,88,93,0.16); color: var(--d-red); }
@@ -552,8 +557,8 @@
             <div class="setup-item"><div class="setup-k">Cohorts modelled</div><div class="setup-v">6 <small>· Trial → Long-Term</small></div></div>
           </div>
           <div class="note-box" style="margin-top:14px;">
-            <div class="note-title">The one word to know · baseline</div>
-            <div class="note-body"><strong>Baseline</strong> is the part of the cancel rate the model <em>can't yet attribute</em> to a measured driver. It includes <strong>organic / expected churn</strong>, but also <strong>factors we can't yet explain</strong>. Everything <em>above</em> the baseline is the part we <em>can</em> attribute — and act on.</div>
+            <div class="note-title">How the cancel rate breaks down</div>
+            <div class="note-body"><strong>Baseline</strong> is the cohort's organic, structural cancel rate — the level you'd see with the measured drivers neutral, re-estimated each week. The <strong>measured drivers</strong> stack on top: the part we can attribute and act on. The <strong>residual</strong> is what the model doesn't yet measure — like competitor activity — plus week-to-week noise.</div>
           </div>
           <div class="note-box ok">
             <div class="note-title">How to read this dashboard</div>
@@ -608,7 +613,7 @@
         <div class="stage" data-stage="11">
           <div class="kicker"><span class="level-tag l1">L1</span> Overview · observed vs model baseline · Trial &amp; New</div>
           <h2 class="stage-title">Where the drivers explain the most.</h2>
-          <p class="stage-desc">Each cohort's observed rate against its <strong>baseline</strong> — the part the model can't yet attribute to a measured driver. The gap above the dashed line is what the measured drivers <em>explain</em>: the attributable, actionable layer. It's widest exactly where the rate is worst — the two early cohorts.</p>
+          <p class="stage-desc">Each cohort's observed rate against its <strong>baseline</strong> — its organic, structural floor. The gap above the dashed line is what the measured drivers <em>explain</em>: the attributable, actionable layer. It's widest exactly where the rate is worst — the two early cohorts.</p>
           <div class="card">
             <div class="card-head"><span>Trial · observed vs baseline · 26 weeks</span><span class="right">→ 2026-05-18 · W21</span></div>
             <div id="explain-trial"></div>
@@ -650,7 +655,7 @@
           <div class="kicker"><span class="level-tag l2">L2</span> Drivers bridge · Trial cohort <span class="qdot g" style="margin-left:4px;"></span></div>
           <div class="cohort-strip" data-on="Trial"></div>
           <h2 class="stage-title">+2.9pp of explained churn — mostly one channel.</h2>
-          <p class="stage-desc">Decomposing the Trial cohort's 19.5% observed cancel rate — our worst rate, on our most trusted model (R² 0.67). Above the 16.6pp baseline (the part not yet attributable to a measured driver), the floating bars are the explained layer: churn the model can name and we can act on — and almost all of it is marketing.</p>
+          <p class="stage-desc">Decomposing the Trial cohort's 19.5% observed cancel rate — our worst rate, on our most trusted model (R² 0.67). Above the 16.6pp baseline (the cohort's structural floor), the floating bars are the explained layer: churn the model can name and we can act on — and almost all of it is marketing.</p>
           <div class="card">
             <div class="card-head"><span>Trial · baseline → drivers → observed</span><span class="right">contribution in pp</span></div>
             <div class="wf-wrap"><div id="wf-trial"></div></div>
@@ -676,28 +681,36 @@
             <div class="card-head"><span>Channels flagged by the model · Trial cohort</span><span class="right">contribution to CR</span></div>
             <div class="rank-list" id="rank-chan-trial"></div>
           </div>
-          <div class="card">
-            <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">W21</span></div>
-            <div class="decomp-row head"><div>Channel term</div><div style="text-align:right">Contribution</div><div style="text-align:right">% of CR</div><div style="text-align:right">% of group</div></div>
+          <div class="card chan-decomp">
+            <div class="card-head"><span>Marketing group · channel decomposition</span><span class="right">contribution · W21</span></div>
+            <div class="decomp-row head"><div>Channel term</div><div style="text-align:right">Contribution</div></div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_direct_sales</code> <span class="lagtag">lag 4</span></div>
-              <div class="decomp-val pos">+1.72pp</div><div class="decomp-val pos">+9.0%</div><div class="rel-r2" style="text-align:right">75.0%</div>
+              <div class="decomp-val pos">+1.72pp</div>
             </div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_organic_social</code> <span class="lagtag">lag 4</span></div>
-              <div class="decomp-val pos">+0.45pp</div><div class="decomp-val pos">+2.3%</div><div class="rel-r2" style="text-align:right">19.5%</div>
+              <div class="decomp-val pos">+0.45pp</div>
             </div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_sms</code> <span class="lagtag">lag 2</span></div>
-              <div class="decomp-val pos">+0.32pp</div><div class="decomp-val pos">+1.7%</div><div class="rel-r2" style="text-align:right">14.1%</div>
+              <div class="decomp-val pos">+0.32pp</div>
             </div>
             <div class="decomp-row">
               <div class="decomp-name"><code>channel_podcast</code> <span class="lagtag">lag 1</span></div>
-              <div class="decomp-val neg">−0.19pp</div><div class="decomp-val neg">−1.0%</div><div class="rel-r2" style="text-align:right">−8.2%</div>
+              <div class="decomp-val neg">−0.19pp</div>
             </div>
             <div class="decomp-row" style="opacity:0.5">
               <div class="decomp-name"><code>tv_digital · pr · call_center</code> <span class="lagtag">lag 4</span></div>
-              <div class="decomp-val">0.00pp</div><div class="decomp-val">0.0%</div><div class="rel-r2" style="text-align:right">input = 0</div>
+              <div class="decomp-val">0.00pp</div>
+            </div>
+            <div class="decomp-row sum">
+              <div class="decomp-name">Marketing group · total</div>
+              <div class="decomp-val pos">+2.30pp</div>
+            </div>
+            <div class="decomp-row sum">
+              <div class="decomp-name">Trial · total cancel rate</div>
+              <div class="decomp-val">19.5%</div>
             </div>
           </div>
           <div class="note-box ok">
@@ -1336,7 +1349,7 @@
       label:'Where we explain most', level:1, stage:11,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"And how much of this can the model actually explain — where do the drivers tell us the most?" },
-        { role:'bot', name:'Retention Copilot', content:"Exactly where we can act. On the right are the two early cohorts against their <strong>baselines</strong> — the dashed line is the part we can't yet attribute; the shaded gap above it is what the measured drivers <em>explain</em>." },
+        { role:'bot', name:'Retention Copilot', content:"Exactly where we can act. On the right are the two early cohorts against their <strong>baselines</strong> — the dashed line is each cohort's structural floor; the shaded gap above it is what the measured drivers <em>explain</em>." },
         { role:'bot', name:'Retention Copilot', content:"<strong>Trial</strong> runs <strong style='color:#9B2629'>+2.9pp</strong> above its 16.6% baseline at W21, <strong>New</strong> <strong style='color:#9B2629'>+0.9pp</strong> above 12.9% — and both models are decision-grade. Down the tenure ladder the gap thins out (market-wide it's just +0.3pp), so the churn we can explain — and act on — is concentrated up front. That's where I'll take you next." }
       ]
     },
@@ -1344,7 +1357,7 @@
       label:'Into the worst one · Trial', level:2, stage:3,
       chat:[
         { role:'user', name:'Simon', sub:'Factor Europe', content:"Good. Then take me into the worst one. What's actually driving the Trial cancels?" },
-        { role:'bot', name:'Retention Copilot', content:"Decomposing Trial. The <strong>baseline sits at 16.6pp</strong> — the part we can't yet attribute to a measured driver. The part that matters is the <strong style='color:#9B2629'>+2.9pp</strong> the drivers stack on top: churn we can name, trace to a channel, and act on — the largest explained layer of any cohort, on our most trusted model (R² 0.67)." },
+        { role:'bot', name:'Retention Copilot', content:"Decomposing Trial. The <strong>baseline sits at 16.6pp</strong> — the cohort's structural floor. The part that matters is the <strong style='color:#9B2629'>+2.9pp</strong> the drivers stack on top: churn we can name, trace to a channel, and act on — the largest explained layer of any cohort, on our most trusted model (R² 0.67)." },
         { role:'bot', name:'Retention Copilot', content:"On top of baseline, the mover is <strong style='color:#9B2629'>Marketing +2.3pp</strong> — and almost all of it is one channel. Product adds a touch (+0.4pp), logistics trims a touch (−0.1pp). Net of a small residual, that's the observed 19.5%." }
       ]
     },
